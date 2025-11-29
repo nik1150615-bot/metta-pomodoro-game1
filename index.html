@@ -330,8 +330,17 @@
       gap: 6px;
     }
 
+    /* таймер + кнопки */
+
+    .timer-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
     .timer-wrap {
-      margin: 2px 0 6px;
+      margin: 2px 0 2px;
       display: flex;
       justify-content: center;
       flex-shrink: 0;
@@ -389,15 +398,6 @@
       letter-spacing: 0.12em;
       color: #9ca3af;
       margin-top: 5px;
-    }
-
-    .controls {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 6px;
-      margin-top: 2px;
-      flex-shrink: 0;
     }
 
     button.main-btn {
@@ -677,7 +677,7 @@
       }
     }
 
-    /* Горизонтальная ориентация — поднимаем всё выше и двигаем подсказки вправо */
+    /* Горизонтальная ориентация */
 
     @media (orientation: landscape) {
       .shell {
@@ -704,21 +704,39 @@
         gap: 16px;
         margin-top: 4px;
       }
+
       .main-left,
       .main-right {
         flex: 1;
       }
+
       .main-right {
         padding-left: 10px;
         border-left: 1px solid rgba(31, 41, 55, 0.9);
       }
-      .timer-wrap { justify-content: flex-start; margin-top: 0; }
+
+      .timer-block {
+        flex-direction: row;
+        justify-content: center;
+        gap: 12px;
+      }
+
+      .timer-wrap {
+        margin: 0;
+      }
+
       .timer-circle {
         width: 170px;
         height: 170px;
       }
+
       .timer { font-size: 32px; }
       .phase-label { font-size: 11px; }
+
+      .main-left .main-btn,
+      .main-left .secondary-btn {
+        min-width: 80px;
+      }
 
       .ach-label,
       .streak-label {
@@ -728,16 +746,15 @@
       .spacer { display: none; }
 
       .tips-row {
-        position: absolute;
-        right: 18px;
-        bottom: 14px;
-        width: 40%;
-        max-width: 340px;
-        border-top: none;
-        padding-top: 0;
-        background: radial-gradient(circle at 0 0, rgba(15,23,42,0.9), rgba(15,23,42,0.7));
-        box-shadow: 0 0 25px rgba(15,23,42,0.9);
+        align-self: flex-end;
+        max-width: 360px;
+        margin-left: auto;
+        border-top: 1px solid rgba(31,41,55,0.9);
+        padding-top: 6px;
+        background: none;
+        box-shadow: none;
       }
+
       .tips-text { font-size: 13px; }
     }
 
@@ -813,31 +830,32 @@
 
       <div class="main-row">
         <div class="main-left">
-          <div class="timer-wrap">
-            <div class="timer-circle">
-              <svg class="timer-svg" viewBox="0 0 200 200" aria-hidden="true">
-                <defs>
-                  <linearGradient id="waterGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="#22c55e"/>
-                    <stop offset="100%" stop-color="#16a34a"/>
-                  </linearGradient>
-                  <clipPath id="waterClip">
-                    <circle cx="100" cy="100" r="100"></circle>
-                  </clipPath>
-                </defs>
-                <g clip-path="url(#waterClip)">
-                  <rect id="waterRect" x="0" y="200" width="200" height="0" fill="url(#waterGradient)"></rect>
-                </g>
-              </svg>
-              <div id="timer" class="timer">25:00</div>
-              <div id="phaseLabel" class="phase-label">Фокус-сессия</div>
-            </div>
-          </div>
-
-          <div class="controls">
+          <div class="timer-block">
             <button id="startPauseBtn" class="main-btn">
               <span>▶</span><span>Старт</span>
             </button>
+
+            <div class="timer-wrap">
+              <div class="timer-circle">
+                <svg class="timer-svg" viewBox="0 0 200 200" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="waterGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#22c55e"/>
+                      <stop offset="100%" stop-color="#16a34a"/>
+                    </linearGradient>
+                    <clipPath id="waterClip">
+                      <circle cx="100" cy="100" r="100"></circle>
+                    </clipPath>
+                  </defs>
+                  <g clip-path="url(#waterClip)">
+                    <rect id="waterRect" x="0" y="200" width="200" height="0" fill="url(#waterGradient)"></rect>
+                  </g>
+                </svg>
+                <div id="timer" class="timer">25:00</div>
+                <div id="phaseLabel" class="phase-label">Фокус-сессия</div>
+              </div>
+            </div>
+
             <button id="resetBtn" class="secondary-btn">Сброс</button>
           </div>
         </div>
@@ -901,21 +919,21 @@
               </div>
             </div>
           </div>
+
+          <div class="tips-row" id="tipRow">
+            <div class="tips-icon">💺</div>
+            <div class="tips-text">
+              <strong>Совет:</strong> настрой кресло так, чтобы колени были под углом ~90°, а спина плотно прилегала к спинке.
+            </div>
+            <div class="tip-nav">
+              <button class="tip-button" id="nextTipBtn">›</button>
+              <div class="tip-hint">Сменить</div>
+            </div>
+          </div>
         </div>
       </div>
 
       <div class="spacer"></div>
-
-      <div class="tips-row" id="tipRow">
-        <div class="tips-icon">💺</div>
-        <div class="tips-text">
-          <strong>Совет:</strong> настрой кресло так, чтобы колени были под углом ~90°, а спина плотно прилегала к спинке.
-        </div>
-        <div class="tip-nav">
-          <button class="tip-button" id="nextTipBtn">›</button>
-          <div class="tip-hint">Сменить</div>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -980,11 +998,11 @@
     const phaseModal = document.getElementById('phaseModal');
     const phaseModalTitle = document.getElementById('phaseModalTitle');
     const phaseModalText = document.getElementById('phaseModalText');
-    const phaseModalNote = document.getElementById('phaseModalNote');
+    the phaseModalNote = document.getElementById('phaseModalNote');
     const phaseModalBtn = document.getElementById('phaseModalBtn');
 
-    const timerCircle = document.querySelector('.timer-circle');
     const waterRect = document.getElementById('waterRect');
+    const timerCircle = document.querySelector('.timer-circle');
 
     let audioCtx = null;
     function playNotificationSound() {
