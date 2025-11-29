@@ -5,43 +5,306 @@
   <title>METTA Pomodoro Game</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
+    * { box-sizing: border-box; }
     body {
-      font-family: system-ui, sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
       text-align: center;
       padding: 20px;
+      margin: 0;
+      background: #f3f4f6;
+    }
+    .card {
+      max-width: 420px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
     }
     h1 {
-      font-size: 24px;
+      font-size: 22px;
+      margin-bottom: 8px;
     }
-    button {
-      padding: 10px 20px;
-      font-size: 18px;
-      border-radius: 8px;
-      border: none;
+    .subtitle {
+      font-size: 14px;
+      color: #6b7280;
+      margin-bottom: 16px;
+    }
+    .modes {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .mode-btn {
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      background: #f9fafb;
+      font-size: 13px;
       cursor: pointer;
     }
-    #score {
-      font-size: 22px;
-      font-weight: bold;
+    .mode-btn.active {
+      background: #111827;
+      color: white;
+      border-color: #111827;
+    }
+    .timer {
+      font-size: 42px;
+      font-weight: 700;
+      margin: 10px 0;
+    }
+    .status {
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+    .status.focus {
+      color: #16a34a;
+    }
+    .status.break {
+      color: #2563eb;
+    }
+    .cycles {
+      font-size: 14px;
+      color: #4b5563;
+      margin-bottom: 16px;
+    }
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    button.main-btn {
+      padding: 10px 18px;
+      border-radius: 999px;
+      border: none;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      background: #111827;
+      color: white;
+    }
+    button.secondary-btn {
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      font-size: 13px;
+      background: white;
+      cursor: pointer;
+    }
+    .tips {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 8px;
+      text-align: left;
+    }
+    .tips strong {
+      color: #111827;
+    }
+    .custom-inputs {
+      margin-top: 8px;
+      display: none;
+      gap: 6px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .custom-inputs input {
+      width: 80px;
+      padding: 4px 6px;
+      font-size: 13px;
+    }
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #4338ca;
+      margin-bottom: 4px;
     }
   </style>
 </head>
 <body>
-  <h1>METTA Pomodoro (тестовая игра)</h1>
-  <p>Это пробная версия игры, которая открывается из Telegram 🎮</p>
+  <div class="card">
+    <div class="badge">METTA • Фокус-игра</div>
+    <h1>Pomodoro для спины</h1>
+    <div class="subtitle">
+      Фокусируйся по таймеру, делай перерывы и не забывай про осанку.
+    </div>
 
-  <p>Очки: <span id="score">0</span></p>
-  <button id="btn">Сделать +1 фокус-сессию</button>
+    <div class="modes">
+      <button class="mode-btn active" data-work="25" data-break="5">25 / 5</button>
+      <button class="mode-btn" data-work="50" data-break="10">50 / 10</button>
+      <button class="mode-btn" id="customModeBtn">Свой режим</button>
+    </div>
+
+    <div class="custom-inputs" id="customInputs">
+      <input type="number" id="customWork" placeholder="Работа, мин" min="1" max="180">
+      <input type="number" id="customBreak" placeholder="Перерыв, мин" min="1" max="60">
+      <button class="secondary-btn" id="applyCustom">OK</button>
+    </div>
+
+    <div id="status" class="status focus">Режим фокуса</div>
+    <div id="timer" class="timer">25:00</div>
+    <div id="cycles" class="cycles">Завершено циклов: 0</div>
+
+    <div class="controls">
+      <button id="startPauseBtn" class="main-btn">Старт</button>
+      <button id="resetBtn" class="secondary-btn">Сброс</button>
+    </div>
+
+    <div class="tips" id="tip">
+      <strong>Совет:</strong> настрой кресло так, чтобы колени были под углом ~90°, а спина плотно прилегала к спинке.
+    </div>
+  </div>
 
   <script>
-    let score = 0;
-    const scoreSpan = document.getElementById('score');
-    const btn = document.getElementById('btn');
+    // начальные значения
+    let workMinutes = 25;
+    let breakMinutes = 5;
+    let remainingSeconds = workMinutes * 60;
+    let isFocus = true;
+    let isRunning = false;
+    let timerInterval = null;
+    let cycles = 0;
 
-    btn.addEventListener('click', () => {
-      score++;
-      scoreSpan.textContent = score;
+    const timerEl = document.getElementById('timer');
+    const statusEl = document.getElementById('status');
+    const cyclesEl = document.getElementById('cycles');
+    const startPauseBtn = document.getElementById('startPauseBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const tipEl = document.getElementById('tip');
+    const modeButtons = document.querySelectorAll('.mode-btn');
+    const customModeBtn = document.getElementById('customModeBtn');
+    const customInputs = document.getElementById('customInputs');
+    const customWorkInput = document.getElementById('customWork');
+    const customBreakInput = document.getElementById('customBreak');
+    const applyCustomBtn = document.getElementById('applyCustom');
+
+    const focusTips = [
+      "Следи, чтобы поясница опиралась на спинку кресла — не заваливайся вперёд к монитору.",
+      "Отрегулируй высоту кресла так, чтобы стопы стояли полностью на полу.",
+      "Экран на уровне глаз: не опускай голову, чтобы не перегружать шею.",
+      "Если работаешь за ноутбуком — подумай о подставке, чтобы поднять экран выше.",
+    ];
+
+    const breakTips = [
+      "Встань, пройди несколько шагов, сделай 3–5 кругов плечами вперёд и назад.",
+      "Сделай мягкие наклоны головы вправо-влево, не торопясь.",
+      "Подними руки вверх, потянись как кошка, глубоко вдохни и выдохни.",
+      "Сделай пару шагов, посмотри в окно вдаль — глаза тоже заслужили отдых.",
+    ];
+
+    function formatTime(sec) {
+      const m = Math.floor(sec / 60);
+      const s = sec % 60;
+      return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+    }
+
+    function updateDisplay() {
+      timerEl.textContent = formatTime(remainingSeconds);
+      cyclesEl.textContent = `Завершено циклов: ${cycles}`;
+      if (isFocus) {
+        statusEl.textContent = "Режим фокуса";
+        statusEl.classList.add('focus');
+        statusEl.classList.remove('break');
+        tipEl.innerHTML = `<strong>Совет:</strong> ${focusTips[Math.floor(Math.random() * focusTips.length)]}`;
+      } else {
+        statusEl.textContent = "Перерыв";
+        statusEl.classList.remove('focus');
+        statusEl.classList.add('break');
+        tipEl.innerHTML = `<strong>Перерыв:</strong> ${breakTips[Math.floor(Math.random() * breakTips.length)]}`;
+      }
+    }
+
+    function startTimer() {
+      if (isRunning) return;
+      isRunning = true;
+      startPauseBtn.textContent = "Пауза";
+      timerInterval = setInterval(() => {
+        remainingSeconds--;
+        if (remainingSeconds <= 0) {
+          clearInterval(timerInterval);
+          isRunning = false;
+
+          if (isFocus) {
+            // завершили фокус — увеличиваем цикл
+            cycles++;
+            isFocus = false;
+            remainingSeconds = breakMinutes * 60;
+          } else {
+            // завершили перерыв — снова фокус
+            isFocus = true;
+            remainingSeconds = workMinutes * 60;
+          }
+
+          updateDisplay();
+          startTimer(); // автоматически запускаем следующий этап
+        } else {
+          updateDisplay();
+        }
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      isRunning = false;
+      startPauseBtn.textContent = "Старт";
+      if (timerInterval) {
+        clearInterval(timerInterval);
+      }
+    }
+
+    function resetTimer() {
+      pauseTimer();
+      isFocus = true;
+      cycles = 0;
+      remainingSeconds = workMinutes * 60;
+      updateDisplay();
+    }
+
+    // обработчики
+    startPauseBtn.addEventListener('click', () => {
+      if (isRunning) {
+        pauseTimer();
+      } else {
+        startTimer();
+      }
     });
+
+    resetBtn.addEventListener('click', () => {
+      resetTimer();
+    });
+
+    modeButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        modeButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        if (btn === customModeBtn) {
+          customInputs.style.display = 'flex';
+        } else {
+          customInputs.style.display = 'none';
+          workMinutes = parseInt(btn.dataset.work, 10);
+          breakMinutes = parseInt(btn.dataset.break, 10);
+          resetTimer();
+        }
+      });
+    });
+
+    applyCustomBtn.addEventListener('click', () => {
+      const w = parseInt(customWorkInput.value, 10);
+      const b = parseInt(customBreakInput.value, 10);
+      if (!isNaN(w) && !isNaN(b) && w > 0 && b > 0) {
+        workMinutes = w;
+        breakMinutes = b;
+        resetTimer();
+      }
+    });
+
+    // начальный рендер
+    updateDisplay();
   </script>
 </body>
 </html>
