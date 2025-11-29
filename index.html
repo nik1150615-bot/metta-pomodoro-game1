@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>METTA Pomodoro Game</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    h1 {
+      font-size: 24px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 18px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+    }
+    #score {
+      font-size: 22px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>METTA Pomodoro (тестовая игра)</h1>
+  <p>Это пробная версия игры, которая открывается из Telegram 🎮</p>
+
+  <p>Очки: <span id="score">0</span></p>
+  <button id="btn">Сделать +1 фокус-сессию</button>
+
+  <script>
+    let score = 0;
+    const scoreSpan = document.getElementById('score');
+    const btn = document.getElementById('btn');
+
+    btn.addEventListener('click', () => {
+      score++;
+      scoreSpan.textContent = score;
+    });
+  </script>
+</body>
+</html>
