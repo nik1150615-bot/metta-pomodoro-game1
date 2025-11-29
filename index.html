@@ -272,7 +272,17 @@
       align-items: center;
       justify-content: center;
       position: relative;
+      /* overflow перенесён внутрь, чтобы на телефоне не превращалось в квадрат */
+    }
+
+    /* обводка-клип, реально обрезающая воду по кругу */
+    .timer-clip {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
       overflow: hidden;
+      pointer-events: none;
+      transform-origin: 50% 50%;
     }
 
     /* "вода" внутри таймера */
@@ -291,10 +301,10 @@
     .timer, .phase-label {
       position: relative;
       z-index: 2;
-      transition: color 0.25s ease-out, text-shadow 0.25s ease-out;
+      transition: color 0.25s ease-out, text-shadow 0.25s ease-out, transform 0.15s ease-out;
+      transform-origin: 50% 50%;
     }
 
-    /* когда "воды" много — делаем текст тёмным, с подсветкой */
     .timer-circle.over-water .timer,
     .timer-circle.over-water .phase-label {
       color: #020617;
@@ -674,7 +684,9 @@
 
       <div class="timer-wrap">
         <div class="timer-circle">
-          <div class="timer-fill" id="timerFill"></div>
+          <div class="timer-clip">
+            <div class="timer-fill" id="timerFill"></div>
+          </div>
           <div id="timer" class="timer">25:00</div>
           <div id="phaseLabel" class="phase-label">Фокус-сессия</div>
         </div>
@@ -723,7 +735,7 @@
                 <path d="M9 4H6.5C6.2 4 6 4.2 6 4.5C6 7 7.5 9 9.5 9"/>
                 <path d="M15 4H17.5C17.8 4 18 4.2 18 4.5C18 7 16.5 9 14.5 9"/>
                 <path d="M10 14H14"/>
-                <path d="M11 14V16.5L10 18V19H14V18L13 16.5V14"/>
+                <path d="M11 14V16.5L10 18V19H14V18L13 16.5В14"/>
               </svg>
             </div>
             <span>Легенда METTA</span>
@@ -826,6 +838,7 @@
     const phaseModalBtn = document.getElementById('phaseModalBtn');
 
     const timerCircle = document.querySelector('.timer-circle');
+    const timerClip = document.querySelector('.timer-clip');
     const timerFill = document.getElementById('timerFill');
 
     let audioCtx = null;
@@ -1106,6 +1119,44 @@
       startTimer();
     }
 
+    // --- «Жидкий» наклон при повороте телефона ---
+    let tiltInitialized = false;
+    function handleOrientation(event) {
+      // gamma — наклон влево/вправо
+      const gamma = event.gamma || 0;
+      const maxTilt = 20; // градусы, которые считаем максимальными
+      const clamped = Math.max(-maxTilt, Math.min(maxTilt, gamma));
+      const angle = clamped * 0.5; // делаем эффект мягче
+
+      if (timerClip) {
+        timerClip.style.transform = `rotate(${angle}deg)`;
+      }
+      // текст оставляем визуально ровным
+      timerEl.style.transform = `rotate(${-angle}deg)`;
+      phaseLabelEl.style.transform = `rotate(${-angle}deg)`;
+    }
+
+    function initTiltOnce() {
+      if (tiltInitialized) return;
+      tiltInitialized = true;
+
+      if (typeof DeviceOrientationEvent !== "undefined" &&
+          typeof DeviceOrientationEvent.requestPermission === "function") {
+        // iOS — нужно разрешение
+        DeviceOrientationEvent.requestPermission()
+          .then(state => {
+            if (state === "granted") {
+              window.addEventListener("deviceorientation", handleOrientation);
+            }
+          })
+          .catch(() => {});
+      } else if (typeof DeviceOrientationEvent !== "undefined") {
+        // Android / другие
+        window.addEventListener("deviceorientation", handleOrientation);
+      }
+    }
+    // --- конец блока про наклон ---
+
     function startTimer() {
       if (isRunning) return;
       isRunning = true;
@@ -1155,6 +1206,9 @@
     }
 
     startPauseBtn.addEventListener('click', () => {
+      // при первом нажатии на Старт пытаемся включить наклон
+      initTiltOnce();
+
       if (isRunning) {
         pauseTimer();
       } else {
