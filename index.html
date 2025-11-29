@@ -638,7 +638,7 @@
         </div>
       </div>
 
-      <div class="modes">
+      <div class="мodes">
         <button class="mode-btn active" data-work="25" data-break="5">
           <span class="mode-dot"></span><span>25 / 5</span>
         </button>
@@ -772,6 +772,14 @@
   </div>
 
   <script>
+    // === вспомогательная функция: "ключ" локальной даты ===
+    function getLocalDateKey(d = new Date()) {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      return `${y}-${m}-${day}`; // например: 2025-11-30
+    }
+
     // настройки таймера
     let workMinutes = 25;
     let breakMinutes = 5;
@@ -783,8 +791,10 @@
     let pendingPhase = null; // 'focusToBreak' | 'breakToFocus'
 
     // streak & cycles (за день)
-    const STREAK_DATE_KEY = "metta_streak_date";
-    const STREAK_VALUE_KEY = "metta_streak_value";
+    const STREAK_DATE_KEY = "metta_streak_date";          // день, к которому относится серия
+    const STREAK_VALUE_KEY = "metta_streak_value";        // значение серии
+    const STREAK_LAST_UPDATED_KEY = "metta_streak_updated"; // когда мы последний раз обновляли серию
+
     const CYCLES_DATE_KEY = "metta_cycles_date";
     const CYCLES_VALUE_KEY = "metta_cycles_value";
 
@@ -950,42 +960,63 @@
       streakStatusEl.textContent = statusText;
     }
 
+    // === правильный подсчёт дней подряд по локальной дате ===
     function initStreak() {
       try {
         const today = new Date();
-        const todayStr = today.toISOString().slice(0, 10);
+        const todayStr = getLocalDateKey(today);
 
-        const lastDateStr = localStorage.getItem(STREAK_DATE_KEY);
+        const lastUpdated = localStorage.getItem(STREAK_LAST_UPDATED_KEY);
         let streak = parseInt(localStorage.getItem(STREAK_VALUE_KEY) || "0", 10);
 
-        if (!lastDateStr) {
+        // если уже сегодня считали серию — просто показываем и выходим
+        if (lastUpdated === todayStr && streak > 0) {
+          updateStreakDisplay(streak);
+          return;
+        }
+
+        const baseDayStr = localStorage.getItem(STREAK_DATE_KEY);
+
+        if (!baseDayStr) {
+          // первый запуск вообще
           streak = 1;
         } else {
-          const last = new Date(lastDateStr);
-          const t0 = new Date(last.getFullYear(), last.getMonth(), last.getDate());
-          const t1 = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-          const diffDays = Math.round((t1 - t0) / (1000 * 60 * 60 * 24));
+          const [by, bm, bd] = baseDayStr.split("-").map(Number);
+          const [ty, tm, td] = todayStr.split("-").map(Number);
+
+          const baseDate = new Date(by, bm - 1, bd);
+          const todayDate = new Date(ty, tm - 1, td);
+
+          const diffDays = Math.round(
+            (todayDate - baseDate) / (1000 * 60 * 60 * 24)
+          );
 
           if (diffDays === 0) {
-            // тот же день — серию не трогаем
+            // тот же день — серия не меняется
+            if (!streak || streak < 1) streak = 1;
           } else if (diffDays === 1) {
-            streak = isFinite(streak) && streak > 0 ? streak + 1 : 1;
+            // вчера → сегодня: серия растёт
+            streak = (isFinite(streak) && streak > 0) ? streak + 1 : 1;
           } else {
+            // пропущен хотя бы один день → серия с 1
             streak = 1;
           }
         }
 
         localStorage.setItem(STREAK_DATE_KEY, todayStr);
         localStorage.setItem(STREAK_VALUE_KEY, String(streak));
+        localStorage.setItem(STREAK_LAST_UPDATED_KEY, todayStr);
+
         updateStreakDisplay(streak);
       } catch (e) {
         updateStreakDisplay(1);
       }
     }
 
+    // === циклы "за сегодня" тоже по локальной дате ===
     function initCyclesToday() {
       try {
-        const todayStr = new Date().toISOString().slice(0, 10);
+        const todayStr = getLocalDateKey();
         const lastDateStr = localStorage.getItem(CYCLES_DATE_KEY);
         let stored = parseInt(localStorage.getItem(CYCLES_VALUE_KEY) || "0", 10);
 
@@ -1003,7 +1034,7 @@
 
     function saveCyclesToday() {
       try {
-        const todayStr = new Date().toISOString().slice(0, 10);
+        const todayStr = getLocalDateKey();
         localStorage.setItem(CYCLES_DATE_KEY, todayStr);
         localStorage.setItem(CYCLES_VALUE_KEY, String(cycles));
       } catch (e) {
