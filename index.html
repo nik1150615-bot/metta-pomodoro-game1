@@ -6,86 +6,283 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     * { box-sizing: border-box; }
+
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
       text-align: center;
       padding: 20px;
       margin: 0;
-      background: #f3f4f6;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(circle at top, #e0f2fe 0, #f9fafb 40%, #e5e7eb 100%);
     }
+
     .card {
-      max-width: 420px;
-      margin: 0 auto;
+      width: 100%;
+      max-width: 430px;
       background: #ffffff;
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+      border-radius: 20px;
+      padding: 20px 18px 18px;
+      box-shadow:
+        0 18px 40px rgba(15, 23, 42, 0.16),
+        0 0 0 1px rgba(148, 163, 184, 0.12);
     }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #4338ca;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-weight: 600;
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.25);
+    }
+
     h1 {
-      font-size: 22px;
-      margin-bottom: 8px;
+      font-size: 20px;
+      text-align: left;
+      margin: 0;
+      color: #0f172a;
     }
+
     .subtitle {
-      font-size: 14px;
+      font-size: 13px;
       color: #6b7280;
-      margin-bottom: 16px;
+      text-align: left;
+      margin-bottom: 12px;
     }
+
+    /* LOGO METTA */
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 90px;
+      justify-content: flex-end;
+    }
+
+    .logo-mark {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #f9fafb 0, #0f172a 70%);
+      color: #f9fafb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 16px;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.35);
+    }
+
+    .logo-text {
+      text-align: left;
+    }
+
+    .logo-brand {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #111827;
+      line-height: 1.1;
+    }
+
+    .logo-sub {
+      font-size: 10px;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+    }
+
     .modes {
       display: flex;
       gap: 8px;
-      margin-bottom: 16px;
+      margin-bottom: 10px;
       flex-wrap: wrap;
-      justify-content: center;
+      justify-content: flex-start;
     }
+
     .mode-btn {
-      padding: 6px 10px;
+      padding: 6px 12px;
       border-radius: 999px;
       border: 1px solid #e5e7eb;
       background: #f9fafb;
       font-size: 13px;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: #374151;
     }
-    .mode-btn.active {
-      background: #111827;
-      color: white;
-      border-color: #111827;
-    }
-    .timer {
-      font-size: 42px;
-      font-weight: 700;
-      margin: 10px 0;
-    }
-    .status {
+
+    .mode-btn span.icon {
       font-size: 14px;
-      margin-bottom: 8px;
     }
-    .status.focus {
+
+    .mode-btn.active {
+      background: #0f172a;
+      color: #f9fafb;
+      border-color: #0f172a;
+    }
+
+    .custom-inputs {
+      margin-top: 6px;
+      display: none;
+      gap: 6px;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+      margin-bottom: 2px;
+    }
+
+    .custom-inputs input {
+      width: 90px;
+      padding: 5px 8px;
+      font-size: 12px;
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      outline: none;
+    }
+
+    .custom-inputs input:focus {
+      border-color: #0f172a;
+    }
+
+    .custom-inputs button {
+      padding: 5px 10px;
+      font-size: 12px;
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 8px 0 4px;
+    }
+
+    .status {
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-pill {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+    }
+
+    .status.focus .status-pill {
+      background: #22c55e;
+    }
+
+    .status.break .status-pill {
+      background: #2563eb;
+    }
+
+    .status-label {
+      font-weight: 600;
+    }
+
+    .status.focus .status-label {
       color: #16a34a;
     }
-    .status.break {
+
+    .status.break .status-label {
       color: #2563eb;
     }
+
     .cycles {
-      font-size: 14px;
-      color: #4b5563;
-      margin-bottom: 16px;
+      font-size: 12px;
+      color: #6b7280;
     }
+
+    .timer-wrap {
+      margin: 6px 0 10px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .timer-circle {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle at top, #eff6ff 0, #ffffff 40%, #e5e7eb 100%);
+      box-shadow:
+        inset 0 0 0 1px rgba(148, 163, 184, 0.3),
+        0 10px 30px rgba(15, 23, 42, 0.13);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .timer {
+      font-size: 40px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .phase-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #9ca3af;
+      margin-top: 4px;
+    }
+
     .controls {
       display: flex;
       justify-content: center;
       gap: 10px;
-      margin-bottom: 10px;
+      margin-bottom: 6px;
+      margin-top: 2px;
     }
+
     button.main-btn {
-      padding: 10px 18px;
+      padding: 10px 20px;
       border-radius: 999px;
       border: none;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 600;
       cursor: pointer;
-      background: #111827;
+      background: #0f172a;
       color: white;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
+
     button.secondary-btn {
       padding: 8px 14px;
       border-radius: 999px;
@@ -93,51 +290,131 @@
       font-size: 13px;
       background: white;
       cursor: pointer;
+      color: #374151;
     }
+
+    /* ACHIEVEMENTS */
+
+    .achievements {
+      margin-top: 4px;
+      margin-bottom: 6px;
+      text-align: left;
+    }
+
+    .ach-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.13em;
+      color: #9ca3af;
+      margin-bottom: 4px;
+    }
+
+    .ach-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .ach-badge {
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px dashed #e5e7eb;
+      color: #9ca3af;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .ach-badge span.icon {
+      font-size: 13px;
+    }
+
+    .ach-badge.earned {
+      border-style: solid;
+      border-color: #0f172a;
+      background: #111827;
+      color: #e5e7eb;
+    }
+
+    .ach-badge.earned .icon {
+      filter: brightness(1.2);
+    }
+
     .tips {
       font-size: 12px;
       color: #6b7280;
-      margin-top: 8px;
+      margin-top: 6px;
       text-align: left;
+      line-height: 1.4;
+      display: flex;
+      gap: 6px;
     }
+
+    .tips-icon {
+      font-size: 14px;
+      margin-top: 2px;
+    }
+
     .tips strong {
       color: #111827;
+      font-weight: 600;
     }
-    .custom-inputs {
-      margin-top: 8px;
-      display: none;
-      gap: 6px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-    .custom-inputs input {
-      width: 80px;
-      padding: 4px 6px;
-      font-size: 13px;
-    }
-    .badge {
-      display: inline-block;
-      font-size: 11px;
-      padding: 3px 8px;
-      border-radius: 999px;
-      background: #eef2ff;
-      color: #4338ca;
-      margin-bottom: 4px;
+
+    @media (max-width: 400px) {
+      .card {
+        padding: 16px 14px 14px;
+        border-radius: 16px;
+      }
+      .timer-circle {
+        width: 160px;
+        height: 160px;
+      }
+      .timer {
+        font-size: 34px;
+      }
+      .logo-brand {
+        font-size: 12px;
+      }
+      .logo-sub {
+        font-size: 9px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="card">
-    <div class="badge">METTA • Фокус-игра</div>
-    <h1>Pomodoro для спины</h1>
+    <div class="header">
+      <div>
+        <div class="badge">
+          <span class="badge-dot"></span>
+          METTA • Focus
+        </div>
+        <h1>Pomodoro для спины</h1>
+      </div>
+      <div class="logo">
+        <div class="logo-mark">M</div>
+        <div class="logo-text">
+          <div class="logo-brand">METTA</div>
+          <div class="logo-sub">Ergonomic Chairs</div>
+        </div>
+      </div>
+    </div>
+
     <div class="subtitle">
-      Фокусируйся по таймеру, делай перерывы и не забывай про осанку.
+      Фокусируйся по таймеру, делай перерывы и помогай спине пережить рабочий день.
     </div>
 
     <div class="modes">
-      <button class="mode-btn active" data-work="25" data-break="5">25 / 5</button>
-      <button class="mode-btn" data-work="50" data-break="10">50 / 10</button>
-      <button class="mode-btn" id="customModeBtn">Свой режим</button>
+      <button class="mode-btn active" data-work="25" data-break="5">
+        <span class="icon">🔥</span><span>25 / 5</span>
+      </button>
+      <button class="mode-btn" data-work="50" data-break="10">
+        <span class="icon">🚀</span><span>50 / 10</span>
+      </button>
+      <button class="mode-btn" id="customModeBtn">
+        <span class="icon">⚙️</span><span>Свой режим</span>
+      </button>
     </div>
 
     <div class="custom-inputs" id="customInputs">
@@ -146,22 +423,56 @@
       <button class="secondary-btn" id="applyCustom">OK</button>
     </div>
 
-    <div id="status" class="status focus">Режим фокуса</div>
-    <div id="timer" class="timer">25:00</div>
-    <div id="cycles" class="cycles">Завершено циклов: 0</div>
+    <div class="status-row">
+      <div id="status" class="status focus">
+        <span class="status-pill"></span>
+        <span class="status-label">Режим фокуса</span>
+      </div>
+      <div id="cycles" class="cycles">Завершено циклов: 0</div>
+    </div>
+
+    <div class="timer-wrap">
+      <div class="timer-circle">
+        <div id="timer" class="timer">25:00</div>
+        <div id="phaseLabel" class="phase-label">Фокус-сессия</div>
+      </div>
+    </div>
 
     <div class="controls">
-      <button id="startPauseBtn" class="main-btn">Старт</button>
+      <button id="startPauseBtn" class="main-btn">
+        <span>▶</span><span>Старт</span>
+      </button>
       <button id="resetBtn" class="secondary-btn">Сброс</button>
     </div>
 
+    <div class="achievements">
+      <div class="ach-label">Достижения сегодня</div>
+      <div class="ach-badges">
+        <div class="ach-badge" data-threshold="1">
+          <span class="icon">🎯</span><span>Новичок фокуса</span>
+        </div>
+        <div class="ach-badge" data-threshold="3">
+          <span class="icon">💪</span><span>Друг спины</span>
+        </div>
+        <div class="ach-badge" data-threshold="5">
+          <span class="icon">⚡</span><span>Герой дедлайна</span>
+        </div>
+        <div class="ach-badge" data-threshold="8">
+          <span class="icon">🏆</span><span>Легенда METTA</span>
+        </div>
+      </div>
+    </div>
+
     <div class="tips" id="tip">
-      <strong>Совет:</strong> настрой кресло так, чтобы колени были под углом ~90°, а спина плотно прилегала к спинке.
+      <div class="tips-icon">💺</div>
+      <div class="tips-text">
+        <strong>Совет:</strong> настрой кресло так, чтобы колени были под углом ~90°, а спина плотно прилегала к спинке.
+      </div>
     </div>
   </div>
 
   <script>
-    // начальные значения
+    // настройки таймера
     let workMinutes = 25;
     let breakMinutes = 5;
     let remainingSeconds = workMinutes * 60;
@@ -170,24 +481,27 @@
     let timerInterval = null;
     let cycles = 0;
 
+    // элементы
     const timerEl = document.getElementById('timer');
+    const phaseLabelEl = document.getElementById('phaseLabel');
     const statusEl = document.getElementById('status');
     const cyclesEl = document.getElementById('cycles');
     const startPauseBtn = document.getElementById('startPauseBtn');
     const resetBtn = document.getElementById('resetBtn');
-    const tipEl = document.getElementById('tip');
+    const tipEl = document.getElementById('tip').querySelector('.tips-text');
     const modeButtons = document.querySelectorAll('.mode-btn');
     const customModeBtn = document.getElementById('customModeBtn');
     const customInputs = document.getElementById('customInputs');
     const customWorkInput = document.getElementById('customWork');
     const customBreakInput = document.getElementById('customBreak');
     const applyCustomBtn = document.getElementById('applyCustom');
+    const achBadges = document.querySelectorAll('.ach-badge');
 
     const focusTips = [
-      "Следи, чтобы поясница опиралась на спинку кресла — не заваливайся вперёд к монитору.",
+      "Следи, чтобы поясница опиралась на спинку кресла — не тянись всем корпусом к монитору.",
       "Отрегулируй высоту кресла так, чтобы стопы стояли полностью на полу.",
       "Экран на уровне глаз: не опускай голову, чтобы не перегружать шею.",
-      "Если работаешь за ноутбуком — подумай о подставке, чтобы поднять экран выше.",
+      "Плотно прижми лопатки к спинке кресла и расслабь плечи.",
     ];
 
     const breakTips = [
@@ -197,32 +511,59 @@
       "Сделай пару шагов, посмотри в окно вдаль — глаза тоже заслужили отдых.",
     ];
 
+    let currentTip = "";
+
     function formatTime(sec) {
       const m = Math.floor(sec / 60);
       const s = sec % 60;
       return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
     }
 
+    function pickTipForPhase() {
+      if (isFocus) {
+        currentTip = focusTips[Math.floor(Math.random() * focusTips.length)];
+        tipEl.innerHTML = `<strong>Совет:</strong> ${currentTip}`;
+      } else {
+        currentTip = breakTips[Math.floor(Math.random() * breakTips.length)];
+        tipEl.innerHTML = `<strong>Перерыв:</strong> ${currentTip}`;
+      }
+    }
+
+    function updateAchievements() {
+      achBadges.forEach(badge => {
+        const threshold = parseInt(badge.getAttribute('data-threshold'), 10);
+        if (cycles >= threshold) {
+          badge.classList.add('earned');
+        } else {
+          badge.classList.remove('earned');
+        }
+      });
+    }
+
     function updateDisplay() {
       timerEl.textContent = formatTime(remainingSeconds);
       cyclesEl.textContent = `Завершено циклов: ${cycles}`;
+
       if (isFocus) {
-        statusEl.textContent = "Режим фокуса";
         statusEl.classList.add('focus');
         statusEl.classList.remove('break');
-        tipEl.innerHTML = `<strong>Совет:</strong> ${focusTips[Math.floor(Math.random() * focusTips.length)]}`;
+        statusEl.querySelector('.status-label').textContent = "Режим фокуса";
+        phaseLabelEl.textContent = "Фокус-сессия";
       } else {
-        statusEl.textContent = "Перерыв";
         statusEl.classList.remove('focus');
         statusEl.classList.add('break');
-        tipEl.innerHTML = `<strong>Перерыв:</strong> ${breakTips[Math.floor(Math.random() * breakTips.length)]}`;
+        statusEl.querySelector('.status-label').textContent = "Перерыв";
+        phaseLabelEl.textContent = "Перерыв для спины";
       }
+
+      updateAchievements();
     }
 
     function startTimer() {
       if (isRunning) return;
       isRunning = true;
-      startPauseBtn.textContent = "Пауза";
+      startPauseBtn.innerHTML = "<span>⏸</span><span>Пауза</span>";
+
       timerInterval = setInterval(() => {
         remainingSeconds--;
         if (remainingSeconds <= 0) {
@@ -230,27 +571,26 @@
           isRunning = false;
 
           if (isFocus) {
-            // завершили фокус — увеличиваем цикл
             cycles++;
             isFocus = false;
             remainingSeconds = breakMinutes * 60;
           } else {
-            // завершили перерыв — снова фокус
             isFocus = true;
             remainingSeconds = workMinutes * 60;
           }
 
+          pickTipForPhase();   // новый совет при смене фазы
           updateDisplay();
-          startTimer(); // автоматически запускаем следующий этап
+          startTimer();        // автозапуск следующей фазы
         } else {
-          updateDisplay();
+          timerEl.textContent = formatTime(remainingSeconds);
         }
       }, 1000);
     }
 
     function pauseTimer() {
       isRunning = false;
-      startPauseBtn.textContent = "Старт";
+      startPauseBtn.innerHTML = "<span>▶</span><span>Старт</span>";
       if (timerInterval) {
         clearInterval(timerInterval);
       }
@@ -261,6 +601,7 @@
       isFocus = true;
       cycles = 0;
       remainingSeconds = workMinutes * 60;
+      pickTipForPhase();
       updateDisplay();
     }
 
@@ -303,7 +644,8 @@
       }
     });
 
-    // начальный рендер
+    // начальная инициализация
+    pickTipForPhase();
     updateDisplay();
   </script>
 </body>
