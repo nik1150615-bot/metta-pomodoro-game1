@@ -8,7 +8,7 @@
     * { box-sizing: border-box; }
 
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemSystemFont, sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
       padding: 0;
       margin: 0;
       min-height: 100vh;
@@ -37,6 +37,8 @@
       border: 1px solid rgba(148, 163, 184, 0.35);
       display: flex;
       flex-direction: column;
+      position: relative;
+      overflow: hidden;
     }
 
     .header {
@@ -44,7 +46,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 10px;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .badge {
@@ -80,8 +82,84 @@
       font-size: 13px;
       color: #9ca3af;
       text-align: left;
-      margin-bottom: 10px;
+      margin-bottom: 4px;
       max-width: 260px;
+    }
+
+    /* Фишка METTA */
+
+    .feature {
+      margin-bottom: 8px;
+    }
+
+    .feature-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 0 0, rgba(59,130,246,0.5), transparent 55%);
+      border: 1px solid rgba(59, 130, 246, 0.5);
+      box-shadow:
+        0 0 18px rgba(59, 130, 246, 0.4),
+        0 0 0 1px rgba(15, 23, 42, 0.9);
+      font-size: 11px;
+      color: #e5e7eb;
+    }
+
+    .feature-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #111827 0, #020617 70%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 10px rgba(59,130,246,0.7);
+    }
+
+    .feature-spine {
+      width: 10px;
+      height: 14px;
+      position: relative;
+      transform-origin: center;
+      animation: spine-wave 1.6s ease-in-out infinite;
+    }
+
+    .feature-spine span {
+      position: absolute;
+      left: 2px;
+      right: 2px;
+      height: 3px;
+      border-radius: 999px;
+      background: #60a5fa;
+      box-shadow: 0 0 6px rgba(96,165,250,0.9);
+    }
+
+    .feature-spine span:nth-child(1) { top: 0; }
+    .feature-spine span:nth-child(2) { top: 5px; }
+    .feature-spine span:nth-child(3) { top: 10px; }
+
+    @keyframes spine-wave {
+      0%, 100% { transform: translateY(0) rotate(-4deg); }
+      50%      { transform: translateY(-1px) rotate(3deg); }
+    }
+
+    .feature-text-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .feature-title {
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-weight: 600;
+      color: #bfdbfe;
+    }
+
+    .feature-text {
+      color: #9ca3af;
     }
 
     .logo {
@@ -129,7 +207,7 @@
     .modes {
       display: flex;
       gap: 8px;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       flex-wrap: wrap;
       justify-content: flex-start;
     }
@@ -203,7 +281,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin: 8px 0 4px;
+      margin: 6px 0 4px;
     }
 
     .status {
@@ -253,7 +331,7 @@
     }
 
     .timer-wrap {
-      margin: 4px 0 6px;
+      margin: 2px 0 6px;
       display: flex;
       justify-content: center;
       flex-shrink: 0;
@@ -282,7 +360,6 @@
       height: 100%;
       border-radius: 50%;
       pointer-events: none;
-      transition: transform 0.15s ease-out;
     }
 
     .timer,
@@ -291,9 +368,7 @@
       z-index: 2;
       transition:
         color 0.25s ease-out,
-        text-shadow 0.25s ease-out,
-        transform 0.15s ease-out;
-      transform-origin: 50% 50%;
+        text-shadow 0.25s ease-out;
     }
 
     .timer-circle.over-water .timer,
@@ -321,7 +396,7 @@
       justify-content: center;
       gap: 10px;
       margin-bottom: 6px;
-      margin-top: 4px;
+      margin-top: 2px;
       flex-shrink: 0;
     }
 
@@ -353,8 +428,8 @@
     }
 
     .achievements {
-      margin-top: 4px;
-      margin-bottom: 6px;
+      margin-top: 2px;
+      margin-bottom: 2px;
       text-align: left;
       flex-shrink: 0;
     }
@@ -412,7 +487,7 @@
 
     .streak {
       margin-top: 2px;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
       text-align: left;
       flex-shrink: 0;
     }
@@ -602,32 +677,32 @@
       }
     }
 
-    /* ГОРИЗОНТАЛЬНЫЙ РЕЖИМ: делаем компактнее */
+    /* Горизонтальная ориентация — поднимаем всё выше и двигаем подсказки вправо */
+
     @media (orientation: landscape) {
       .shell {
-        max-width: 860px;
-        padding: 6px 8px;
+        max-width: 900px;
+        padding: 8px 10px;
       }
       .card {
         height: calc(100vh - 16px);
         max-height: none;
-        padding: 12px 14px 10px;
+        padding: 12px 18px 12px;
       }
-      .header {
-        margin-bottom: 4px;
-      }
+      .header { margin-bottom: 4px; }
       h1 { font-size: 18px; }
-      .subtitle {
-        font-size: 12px;
-        margin-bottom: 6px;
-      }
-      .modes {
-        margin-bottom: 6px;
-      }
+      .subtitle { font-size: 12px; max-width: 280px; }
+
+      .feature { margin-bottom: 6px; }
+      .feature-pill { font-size: 10px; padding: 4px 9px; }
+
+      .modes { margin-bottom: 6px; }
+
       .main-row {
         flex-direction: row;
         align-items: flex-start;
-        gap: 10px;
+        gap: 16px;
+        margin-top: 4px;
       }
       .main-left,
       .main-right {
@@ -637,25 +712,35 @@
         padding-left: 10px;
         border-left: 1px solid rgba(31, 41, 55, 0.9);
       }
-      .timer-wrap {
-        justify-content: flex-start;
-      }
+      .timer-wrap { justify-content: flex-start; margin-top: 0; }
       .timer-circle {
-        width: 165px;
-        height: 165px;
+        width: 170px;
+        height: 170px;
       }
       .timer { font-size: 32px; }
       .phase-label { font-size: 11px; }
+
       .ach-label,
       .streak-label {
         font-size: 10px;
       }
-      .tips-text {
-        font-size: 13px;
+
+      .spacer { display: none; }
+
+      .tips-row {
+        position: absolute;
+        right: 18px;
+        bottom: 14px;
+        width: 40%;
+        max-width: 340px;
+        border-top: none;
+        padding-top: 0;
+        background: radial-gradient(circle at 0 0, rgba(15,23,42,0.9), rgba(15,23,42,0.7));
+        box-shadow: 0 0 25px rgba(15,23,42,0.9);
       }
+      .tips-text { font-size: 13px; }
     }
 
-    /* очень низкие landscape-экраны — ещё чуть уменьшаем всё */
     @media (orientation: landscape) and (max-height: 480px) {
       .card {
         transform: scale(0.9);
@@ -676,6 +761,19 @@
           <h1>Pomodoro для спины</h1>
           <div class="subtitle">
             Работай по таймеру, делай паузы и не давай спине сдаваться.
+          </div>
+          <div class="feature">
+            <div class="feature-pill">
+              <div class="feature-icon">
+                <div class="feature-spine">
+                  <span></span><span></span><span></span>
+                </div>
+              </div>
+              <div class="feature-text-wrap">
+                <div class="feature-title">Фишка METTA</div>
+                <div class="feature-text">Гибкий «позвоночник» спинки — меньше нагрузки на поясницу.</div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="logo">
@@ -781,7 +879,7 @@
                     <path d="M9 4H6.5C6.2 4 6 4.2 6 4.5C6 7 7.5 9 9.5 9"/>
                     <path d="M15 4H17.5C17.8 4 18 4.2 18 4.5C18 7 16.5 9 14.5 9"/>
                     <path d="M10 14H14"/>
-                    <path d="M11 14В16.5L10 18В19H14В18L13 16.5В14"/>
+                    <path d="M11 14V16.5L10 18V19H14V18L13 16.5V14"/>
                   </svg>
                 </div>
                 <span>Легенда METTA</span>
@@ -886,7 +984,6 @@
     const phaseModalBtn = document.getElementById('phaseModalBtn');
 
     const timerCircle = document.querySelector('.timer-circle');
-    const timerSvg = document.querySelector('.timer-svg');
     const waterRect = document.getElementById('waterRect');
 
     let audioCtx = null;
@@ -1170,41 +1267,6 @@
       startTimer();
     }
 
-    // Наклон воды: теперь она «остается на дне»
-    let tiltInitialized = false;
-    function handleOrientation(event) {
-      const gamma = event.gamma || 0;
-      const maxTilt = 20;
-      const clamped = Math.max(-maxTilt, Math.min(maxTilt, gamma));
-      const angle = clamped * 0.5;
-
-      if (timerSvg) {
-        // воду наклоняем в ту же сторону, куда наклонён телефон
-        timerSvg.style.transform = `rotate(${angle}deg)`;
-      }
-      // текст компенсируем, чтобы оставался ровным
-      timerEl.style.transform = `rotate(${-angle}deg)`;
-      phaseLabelEl.style.transform = `rotate(${-angle}deg)`;
-    }
-
-    function initTiltOnce() {
-      if (tiltInitialized) return;
-      tiltInitialized = true;
-
-      if (typeof DeviceOrientationEvent !== "undefined" &&
-          typeof DeviceOrientationEvent.requestPermission === "function") {
-        DeviceOrientationEvent.requestPermission()
-          .then(state => {
-            if (state === "granted") {
-              window.addEventListener("deviceorientation", handleOrientation);
-            }
-          })
-          .catch(() => {});
-      } else if (typeof DeviceOrientationEvent !== "undefined") {
-        window.addEventListener("deviceorientation", handleOrientation);
-      }
-    }
-
     function startTimer() {
       if (isRunning) return;
       isRunning = true;
@@ -1254,7 +1316,6 @@
     }
 
     startPauseBtn.addEventListener('click', () => {
-      initTiltOnce();
       if (isRunning) {
         pauseTimer();
       } else {
