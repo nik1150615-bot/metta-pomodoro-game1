@@ -12,7 +12,7 @@
       padding: 0;
       margin: 0;
       min-height: 100vh;
-      background: radial-gradient(circle at top, #020617 0, #020617 40%, #000000 100%);
+      background: radial-gradient(circle at top, #0b1220 0, #020617 45%, #020617 100%);
       color: #e5e7eb;
       display: flex;
       justify-content: center;
@@ -32,9 +32,9 @@
       border-radius: 20px;
       padding: 18px 18px 16px;
       box-shadow:
-        0 24px 60px rgba(0, 0, 0, 0.7),
-        0 0 0 1px rgba(15, 23, 42, 0.85);
-      border: 1px solid rgba(148, 163, 184, 0.25);
+        0 24px 60px rgba(15, 23, 42, 0.85),
+        0 0 0 1px rgba(30, 64, 175, 0.7);
+      border: 1px solid rgba(148, 163, 184, 0.35);
       display: flex;
       flex-direction: column;
     }
@@ -84,7 +84,7 @@
       max-width: 260px;
     }
 
-    /* LOGO METTA — dark */
+    /* LOGO METTA — немного светлее */
 
     .logo {
       display: flex;
@@ -98,7 +98,7 @@
       width: 28px;
       height: 28px;
       border-radius: 999px;
-      background: radial-gradient(circle at 30% 20%, #1f2937 0, #020617 70%);
+      background: radial-gradient(circle at 30% 20%, #111827 0, #020617 70%);
       color: #e5e7eb;
       display: flex;
       align-items: center;
@@ -107,7 +107,7 @@
       font-size: 16px;
       box-shadow:
         0 4px 12px rgba(15, 23, 42, 0.9),
-        0 0 0 1px rgba(148, 163, 184, 0.4);
+        0 0 0 1px rgba(148, 163, 184, 0.45);
     }
 
     .logo-text {
@@ -119,7 +119,7 @@
       font-weight: 700;
       letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: #e5e7eb;
+      color: #f9fafb;
       line-height: 1.1;
     }
 
@@ -166,7 +166,7 @@
       color: #020617;
       border-color: #22c55e;
       box-shadow:
-        0 0 0 1px rgba(34, 197, 94, 0.8),
+        0 0 0 1px rgba(34, 197, 94, 0.85),
         0 0 18px rgba(34, 197, 94, 0.55);
     }
 
@@ -265,9 +265,9 @@
       width: 200px;
       height: 200px;
       border-radius: 50%;
-      background: radial-gradient(circle at 30% 0, #111827 0, #020617 55%, #000000 100%);
+      background: radial-gradient(circle at 30% 0, #1f2937 0, #020617 55%, #020617 100%);
       box-shadow:
-        inset 0 0 0 1px rgba(55, 65, 81, 0.9),
+        inset 0 0 0 1px rgba(55, 65, 81, 0.8),
         0 10px 40px rgba(0, 0, 0, 0.9);
       display: flex;
       flex-direction: column;
@@ -313,7 +313,7 @@
       align-items: center;
       gap: 6px;
       box-shadow:
-        0 0 0 1px rgba(34, 197, 94, 0.8),
+        0 0 0 1px rgba(34, 197, 94, 0.85),
         0 8px 24px rgba(34, 197, 94, 0.45);
     }
 
@@ -416,7 +416,7 @@
       width: 26px;
       height: 26px;
       border-radius: 999px;
-      background: radial-gradient(circle at 30% 0, #111827 0, #020617 70%);
+      background: radial-gradient(circle at 30% 0, #1f2937 0, #020617 70%);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -523,12 +523,12 @@
       flex: 1;
     }
 
-    /* PHASE MODAL */
+    /* PHASE MODAL — больше, светлее и с похвалой */
 
     .phase-modal {
       position: fixed;
       inset: 0;
-      background: rgba(15, 23, 42, 0.88);
+      background: rgba(15, 23, 42, 0.9);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -541,33 +541,40 @@
 
     .phase-modal-inner {
       width: 100%;
-      max-width: 320px;
+      max-width: 360px;
       background: #020617;
-      border-radius: 18px;
-      padding: 18px 16px 14px;
+      border-radius: 22px;
+      padding: 22px 18px 16px;
       box-shadow:
-        0 20px 50px rgba(0,0,0,0.9),
-        0 0 0 1px rgba(30, 64, 175, 0.6);
-      border: 1px solid rgba(148, 163, 184, 0.4);
+        0 28px 70px rgba(0,0,0,0.95),
+        0 0 0 1px rgba(59, 130, 246, 0.7);
+      border: 1px solid rgba(148, 163, 184, 0.5);
       text-align: left;
     }
 
     .phase-modal-title {
-      font-size: 16px;
+      font-size: 18px;
       font-weight: 600;
-      margin-bottom: 6px;
-      color: #e5e7eb;
+      margin-bottom: 8px;
+      color: #f9fafb;
     }
 
     .phase-modal-text {
-      font-size: 13px;
-      color: #9ca3af;
+      font-size: 14px;
+      color: #d1d5db;
       margin-bottom: 12px;
+      line-height: 1.5;
+    }
+
+    .phase-modal-note {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-bottom: 14px;
     }
 
     .phase-modal-btn {
       width: 100%;
-      padding: 9px 14px;
+      padding: 10px 14px;
       border-radius: 999px;
       border: none;
       font-size: 14px;
@@ -577,7 +584,7 @@
       color: #020617;
       box-shadow:
         0 0 0 1px rgba(34, 197, 94, 0.8),
-        0 8px 24px rgba(34, 197, 94, 0.45);
+        0 10px 26px rgba(34, 197, 94, 0.5);
     }
 
     @media (max-width: 420px) {
@@ -600,6 +607,10 @@
       }
       .logo-sub {
         font-size: 8px;
+      }
+      .phase-modal-inner {
+        max-width: 320px;
+        padding: 18px 14px 14px;
       }
     }
   </style>
@@ -751,7 +762,10 @@
     <div class="phase-modal-inner">
       <div id="phaseModalTitle" class="phase-modal-title">Фокус-сессия окончена</div>
       <div id="phaseModalText" class="phase-modal-text">
-        Самое время сделать небольшой перерыв и размять спину.
+        Отлично поработала — это ещё один шаг к спокойной спине и голове.
+      </div>
+      <div id="phaseModalNote" class="phase-modal-note">
+        Нажми, когда будешь готова перейти к следующей фазе.
       </div>
       <button id="phaseModalBtn" class="phase-modal-btn">Начать перерыв</button>
     </div>
@@ -768,9 +782,11 @@
     let cycles = 0;
     let pendingPhase = null; // 'focusToBreak' | 'breakToFocus'
 
-    // streak (серия дней)
+    // streak & cycles (за день)
     const STREAK_DATE_KEY = "metta_streak_date";
     const STREAK_VALUE_KEY = "metta_streak_value";
+    const CYCLES_DATE_KEY = "metta_cycles_date";
+    const CYCLES_VALUE_KEY = "metta_cycles_value";
 
     // элементы
     const timerEl = document.getElementById('timer');
@@ -796,9 +812,10 @@
     const phaseModal = document.getElementById('phaseModal');
     const phaseModalTitle = document.getElementById('phaseModalTitle');
     const phaseModalText = document.getElementById('phaseModalText');
+    const phaseModalNote = document.getElementById('phaseModalNote');
     const phaseModalBtn = document.getElementById('phaseModalBtn');
 
-    // аудио-уведомление
+    // аудио-уведомление (3 мягких "пинг")
     let audioCtx = null;
     function playNotificationSound() {
       try {
@@ -808,19 +825,27 @@
         if (audioCtx.state === "suspended") {
           audioCtx.resume();
         }
-        const o = audioCtx.createOscillator();
-        const g = audioCtx.createGain();
-        o.type = "sine";
-        o.frequency.setValueAtTime(880, audioCtx.currentTime);
-        o.connect(g);
-        g.connect(audioCtx.destination);
-        g.gain.setValueAtTime(0.0001, audioCtx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.2, audioCtx.currentTime + 0.01);
-        g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
-        o.start();
-        o.stop(audioCtx.currentTime + 0.5);
+
+        function beep(atTime, freq) {
+          const o = audioCtx.createOscillator();
+          const g = audioCtx.createGain();
+          o.type = "sine";
+          o.frequency.setValueAtTime(freq, atTime);
+          o.connect(g);
+          g.connect(audioCtx.destination);
+          g.gain.setValueAtTime(0.0001, atTime);
+          g.gain.exponentialRampToValueAtTime(0.18, atTime + 0.01);
+          g.gain.exponentialRampToValueAtTime(0.0001, atTime + 0.35);
+          o.start(atTime);
+          o.stop(atTime + 0.4);
+        }
+
+        const now = audioCtx.currentTime;
+        beep(now, 880);
+        beep(now + 0.5, 880);
+        beep(now + 1.0, 880);
       } catch (e) {
-        // если браузер заблокировал звук, просто молча игнорируем
+        // если браузер заблокировал звук, просто игнорируем
       }
     }
 
@@ -958,6 +983,34 @@
       }
     }
 
+    function initCyclesToday() {
+      try {
+        const todayStr = new Date().toISOString().slice(0, 10);
+        const lastDateStr = localStorage.getItem(CYCLES_DATE_KEY);
+        let stored = parseInt(localStorage.getItem(CYCLES_VALUE_KEY) || "0", 10);
+
+        if (!lastDateStr || lastDateStr !== todayStr) {
+          cycles = 0;
+          localStorage.setItem(CYCLES_DATE_KEY, todayStr);
+          localStorage.setItem(CYCLES_VALUE_KEY, "0");
+        } else {
+          cycles = isFinite(stored) && stored >= 0 ? stored : 0;
+        }
+      } catch (e) {
+        cycles = 0;
+      }
+    }
+
+    function saveCyclesToday() {
+      try {
+        const todayStr = new Date().toISOString().slice(0, 10);
+        localStorage.setItem(CYCLES_DATE_KEY, todayStr);
+        localStorage.setItem(CYCLES_VALUE_KEY, String(cycles));
+      } catch (e) {
+        // ignore
+      }
+    }
+
     function updateDisplay() {
       timerEl.textContent = formatTime(remainingSeconds);
       cyclesEl.textContent = `Завершено циклов: ${cycles}`;
@@ -981,12 +1034,17 @@
       pendingPhase = type;
 
       if (type === "focusToBreak") {
-        phaseModalTitle.textContent = "Фокус-сессия окончена";
-        phaseModalText.textContent = "Самое время сделать небольшой перерыв и размять спину.";
+        const nextCycle = cycles + 1;
+        phaseModalTitle.textContent = "Фокус-сессия завершена ✔";
+        phaseModalText.textContent =
+          `Отлично! Ты закрыла уже ${nextCycle}-ю фокус-сессию сегодня — спина и мозг благодарны.`;
+        phaseModalNote.textContent = "Нажми, когда будешь готова перейти к перерыву и немного разгрузить тело.";
         phaseModalBtn.textContent = "Начать перерыв";
       } else {
-        phaseModalTitle.textContent = "Перерыв завершён";
-        phaseModalText.textContent = "Пора вернуться к фокусу и сделать ещё один продуктивный подход.";
+        phaseModalTitle.textContent = "Перерыв завершён 💡";
+        phaseModalText.textContent =
+          "Класс, что даёшь себе отдых. Теперь можно мягко вернуться к задаче и забрать ещё один фокус-цикл.";
+        phaseModalNote.textContent = "Нажми, когда готова снова сфокусироваться на работе.";
         phaseModalBtn.textContent = "Начать фокус";
       }
 
@@ -1000,6 +1058,7 @@
       if (pendingPhase === "focusToBreak") {
         // закончили фокус → считаем цикл, переходим к перерыву
         cycles++;
+        saveCyclesToday();
         isFocus = false;
         remainingSeconds = breakMinutes * 60;
       } else {
@@ -1051,9 +1110,9 @@
     }
 
     function resetTimer() {
+      // сбрасываем только текущий таймер и фазу, НО НЕ achievements/cycles
       pauseTimer();
       isFocus = true;
-      cycles = 0;
       remainingSeconds = workMinutes * 60;
       pendingPhase = null;
       phaseModal.classList.add("hidden");
@@ -1109,6 +1168,7 @@
     });
 
     // стартовое состояние
+    initCyclesToday();
     resetTipIndexForPhase();
     updateDisplay();
     initStreak();
