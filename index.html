@@ -232,7 +232,6 @@
       text-align: right;
     }
 
-    /* основная зона (таймер слева, достижения справа в landscape) */
     .main-row {
       display: flex;
       flex-direction: column;
@@ -276,7 +275,6 @@
       overflow: visible;
     }
 
-    /* SVG, который делает воду по кругу */
     .timer-svg {
       position: absolute;
       inset: 0;
@@ -284,14 +282,17 @@
       height: 100%;
       border-radius: 50%;
       pointer-events: none;
+      transition: transform 0.15s ease-out;
     }
 
-    .timer, .phase-label {
+    .timer,
+    .phase-label {
       position: relative;
       z-index: 2;
-      transition: color 0.25s ease-out,
-                  text-shadow 0.25s ease-out,
-                  transform 0.15s ease-out;
+      transition:
+        color 0.25s ease-out,
+        text-shadow 0.25s ease-out,
+        transform 0.15s ease-out;
       transform-origin: 50% 50%;
     }
 
@@ -601,33 +602,64 @@
       }
     }
 
-    /* ГОРИЗОНТАЛЬНАЯ ОРИЕНТАЦИЯ: раскладываем в две колонки */
+    /* ГОРИЗОНТАЛЬНЫЙ РЕЖИМ: делаем компактнее */
     @media (orientation: landscape) {
       .shell {
-        max-width: 900px;
+        max-width: 860px;
+        padding: 6px 8px;
       }
       .card {
-        height: auto;
+        height: calc(100vh - 16px);
         max-height: none;
+        padding: 12px 14px 10px;
+      }
+      .header {
+        margin-bottom: 4px;
+      }
+      h1 { font-size: 18px; }
+      .subtitle {
+        font-size: 12px;
+        margin-bottom: 6px;
+      }
+      .modes {
+        margin-bottom: 6px;
       }
       .main-row {
         flex-direction: row;
         align-items: flex-start;
+        gap: 10px;
       }
       .main-left,
       .main-right {
         flex: 1;
       }
       .main-right {
-        padding-left: 14px;
+        padding-left: 10px;
         border-left: 1px solid rgba(31, 41, 55, 0.9);
       }
       .timer-wrap {
         justify-content: flex-start;
       }
-      .achievements,
-      .streak {
-        margin-top: 0;
+      .timer-circle {
+        width: 165px;
+        height: 165px;
+      }
+      .timer { font-size: 32px; }
+      .phase-label { font-size: 11px; }
+      .ach-label,
+      .streak-label {
+        font-size: 10px;
+      }
+      .tips-text {
+        font-size: 13px;
+      }
+    }
+
+    /* очень низкие landscape-экраны — ещё чуть уменьшаем всё */
+    @media (orientation: landscape) and (max-height: 480px) {
+      .card {
+        transform: scale(0.9);
+        transform-origin: top center;
       }
     }
   </style>
@@ -749,7 +781,7 @@
                     <path d="M9 4H6.5C6.2 4 6 4.2 6 4.5C6 7 7.5 9 9.5 9"/>
                     <path d="M15 4H17.5C17.8 4 18 4.2 18 4.5C18 7 16.5 9 14.5 9"/>
                     <path d="M10 14H14"/>
-                    <path d="M11 14V16.5L10 18V19H14V18L13 16.5V14"/>
+                    <path d="M11 14В16.5L10 18В19H14В18L13 16.5В14"/>
                   </svg>
                 </div>
                 <span>Легенда METTA</span>
@@ -1025,8 +1057,7 @@
         localStorage.setItem(STREAK_LAST_UPDATED_KEY, todayStr);
 
         updateStreakDisplay(streak);
-      } catch (e) {
-      }
+      } catch (e) {}
     }
 
     function initCyclesToday() {
@@ -1061,7 +1092,7 @@
       const elapsed = totalSecondsCurrentPhase - remainingSeconds;
       const ratio = Math.max(0, Math.min(1, elapsed / totalSecondsCurrentPhase));
 
-      const fullH = 200; // высота viewBox
+      const fullH = 200;
       const h = fullH * ratio;
       const y = fullH - h;
 
@@ -1139,7 +1170,7 @@
       startTimer();
     }
 
-    // лёгкий «наклон воды» при повороте устройства
+    // Наклон воды: теперь она «остается на дне»
     let tiltInitialized = false;
     function handleOrientation(event) {
       const gamma = event.gamma || 0;
@@ -1148,8 +1179,10 @@
       const angle = clamped * 0.5;
 
       if (timerSvg) {
+        // воду наклоняем в ту же сторону, куда наклонён телефон
         timerSvg.style.transform = `rotate(${angle}deg)`;
       }
+      // текст компенсируем, чтобы оставался ровным
       timerEl.style.transform = `rotate(${-angle}deg)`;
       phaseLabelEl.style.transform = `rotate(${-angle}deg)`;
     }
@@ -1221,7 +1254,7 @@
     }
 
     startPauseBtn.addEventListener('click', () => {
-      initTiltOnce(); // при первом старте просим доступ к датчику
+      initTiltOnce();
       if (isRunning) {
         pauseTimer();
       } else {
