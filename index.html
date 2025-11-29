@@ -8,7 +8,7 @@
     * { box-sizing: border-box; }
 
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemSystemFont, sans-serif;
       padding: 0;
       margin: 0;
       min-height: 100vh;
@@ -108,9 +108,7 @@
         0 0 0 1px rgba(148, 163, 184, 0.45);
     }
 
-    .logo-text {
-      text-align: left;
-    }
+    .logo-text { text-align: left; }
 
     .logo-brand {
       font-size: 13px;
@@ -188,13 +186,8 @@
       color: #e5e7eb;
     }
 
-    .custom-inputs input::placeholder {
-      color: #6b7280;
-    }
-
-    .custom-inputs input:focus {
-      border-color: #22c55e;
-    }
+    .custom-inputs input::placeholder { color: #6b7280; }
+    .custom-inputs input:focus { border-color: #22c55e; }
 
     .custom-inputs button {
       padding: 5px 10px;
@@ -226,25 +219,12 @@
       border-radius: 999px;
     }
 
-    .status.focus .status-pill {
-      background: #22c55e;
-    }
+    .status.focus .status-pill { background: #22c55e; }
+    .status.break .status-pill { background: #38bdf8; }
 
-    .status.break .status-pill {
-      background: #38bdf8;
-    }
-
-    .status-label {
-      font-weight: 600;
-    }
-
-    .status.focus .status-label {
-      color: #4ade80;
-    }
-
-    .status.break .status-label {
-      color: #38bdf8;
-    }
+    .status-label { font-weight: 600; }
+    .status.focus .status-label { color: #4ade80; }
+    .status.break .status-label { color: #38bdf8; }
 
     .cycles {
       font-size: 12px;
@@ -252,8 +232,29 @@
       text-align: right;
     }
 
+    /* основная зона (таймер слева, достижения справа в landscape) */
+    .main-row {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .main-left {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .main-right {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
     .timer-wrap {
-      margin: 4px 0 10px;
+      margin: 4px 0 6px;
       display: flex;
       justify-content: center;
       flex-shrink: 0;
@@ -272,36 +273,25 @@
       align-items: center;
       justify-content: center;
       position: relative;
-      /* overflow перенесён внутрь, чтобы на телефоне не превращалось в квадрат */
+      overflow: visible;
     }
 
-    /* обводка-клип, реально обрезающая воду по кругу */
-    .timer-clip {
+    /* SVG, который делает воду по кругу */
+    .timer-svg {
       position: absolute;
       inset: 0;
-      border-radius: 50%;
-      overflow: hidden;
-      pointer-events: none;
-      transform-origin: 50% 50%;
-    }
-
-    /* "вода" внутри таймера */
-    .timer-fill {
-      position: absolute;
-      left: 0;
-      bottom: 0;
       width: 100%;
-      height: 0%;
-      background: linear-gradient(180deg, rgba(34, 197, 94, 0.95), #16a34a);
-      opacity: 0.95;
-      transition: height 0.35s ease-out;
-      filter: drop-shadow(0 0 12px rgba(34, 197, 94, 0.55));
+      height: 100%;
+      border-radius: 50%;
+      pointer-events: none;
     }
 
     .timer, .phase-label {
       position: relative;
       z-index: 2;
-      transition: color 0.25s ease-out, text-shadow 0.25s ease-out, transform 0.15s ease-out;
+      transition: color 0.25s ease-out,
+                  text-shadow 0.25s ease-out,
+                  transform 0.15s ease-out;
       transform-origin: 50% 50%;
     }
 
@@ -417,9 +407,7 @@
       box-shadow: 0 0 14px rgba(34, 197, 94, 0.3);
     }
 
-    .ach-badge.earned svg {
-      stroke: #bbf7d0;
-    }
+    .ach-badge.earned svg { stroke: #bbf7d0; }
 
     .streak {
       margin-top: 2px;
@@ -463,8 +451,8 @@
       stroke: #6b7280;
     }
 
-    .streak-icon.low svg { stroke: #6b7280; }
-    .streak-icon.mid svg { stroke: #fb923c; }
+    .streak-icon.low svg  { stroke: #6b7280; }
+    .streak-icon.mid svg  { stroke: #fb923c; }
     .streak-icon.high svg { stroke: #fbbf24; }
 
     .streak-text {
@@ -473,15 +461,8 @@
       gap: 2px;
     }
 
-    .streak-value {
-      font-size: 13px;
-      color: #e5e7eb;
-    }
-
-    .streak-status {
-      font-size: 11px;
-      color: #9ca3af;
-    }
+    .streak-value { font-size: 13px; color: #e5e7eb; }
+    .streak-status { font-size: 11px; color: #9ca3af; }
 
     .tips-row {
       margin-top: 6px;
@@ -539,9 +520,7 @@
       letter-spacing: 0.09em;
     }
 
-    .spacer {
-      flex: 1;
-    }
+    .spacer { flex: 1; }
 
     .phase-modal {
       position: fixed;
@@ -553,9 +532,7 @@
       z-index: 20;
     }
 
-    .phase-modal.hidden {
-      display: none;
-    }
+    .phase-modal.hidden { display: none; }
 
     .phase-modal-inner {
       width: 100%;
@@ -614,21 +591,43 @@
         width: 180px;
         height: 180px;
       }
-      .timer {
-        font-size: 36px;
-      }
-      .subtitle {
-        max-width: 220px;
-      }
-      .logo-brand {
-        font-size: 12px;
-      }
-      .logo-sub {
-        font-size: 8px;
-      }
+      .timer { font-size: 36px; }
+      .subtitle { max-width: 220px; }
+      .logo-brand { font-size: 12px; }
+      .logo-sub { font-size: 8px; }
       .phase-modal-inner {
         max-width: 320px;
         padding: 18px 14px 14px;
+      }
+    }
+
+    /* ГОРИЗОНТАЛЬНАЯ ОРИЕНТАЦИЯ: раскладываем в две колонки */
+    @media (orientation: landscape) {
+      .shell {
+        max-width: 900px;
+      }
+      .card {
+        height: auto;
+        max-height: none;
+      }
+      .main-row {
+        flex-direction: row;
+        align-items: flex-start;
+      }
+      .main-left,
+      .main-right {
+        flex: 1;
+      }
+      .main-right {
+        padding-left: 14px;
+        border-left: 1px solid rgba(31, 41, 55, 0.9);
+      }
+      .timer-wrap {
+        justify-content: flex-start;
+      }
+      .achievements,
+      .streak {
+        margin-top: 0;
       }
     }
   </style>
@@ -682,78 +681,95 @@
         <div id="cycles" class="cycles">Завершено циклов: 0</div>
       </div>
 
-      <div class="timer-wrap">
-        <div class="timer-circle">
-          <div class="timer-clip">
-            <div class="timer-fill" id="timerFill"></div>
+      <div class="main-row">
+        <div class="main-left">
+          <div class="timer-wrap">
+            <div class="timer-circle">
+              <svg class="timer-svg" viewBox="0 0 200 200" aria-hidden="true">
+                <defs>
+                  <linearGradient id="waterGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#22c55e"/>
+                    <stop offset="100%" stop-color="#16a34a"/>
+                  </linearGradient>
+                  <clipPath id="waterClip">
+                    <circle cx="100" cy="100" r="100"></circle>
+                  </clipPath>
+                </defs>
+                <g clip-path="url(#waterClip)">
+                  <rect id="waterRect" x="0" y="200" width="200" height="0" fill="url(#waterGradient)"></rect>
+                </g>
+              </svg>
+              <div id="timer" class="timer">25:00</div>
+              <div id="phaseLabel" class="phase-label">Фокус-сессия</div>
+            </div>
           </div>
-          <div id="timer" class="timer">25:00</div>
-          <div id="phaseLabel" class="phase-label">Фокус-сессия</div>
-        </div>
-      </div>
 
-      <div class="controls">
-        <button id="startPauseBtn" class="main-btn">
-          <span>▶</span><span>Старт</span>
-        </button>
-        <button id="resetBtn" class="secondary-btn">Сброс</button>
-      </div>
-
-      <div class="achievements">
-        <div class="ach-label">Достижения сегодня</div>
-        <div class="ach-badges">
-          <div class="ach-badge" data-threshold="1">
-            <div class="ach-icon">
-              <svg viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="7.5"/>
-                <circle cx="12" cy="12" r="4"/>
-                <circle cx="12" cy="12" r="1.2"/>
-              </svg>
-            </div>
-            <span>Новичок фокуса</span>
-          </div>
-          <div class="ach-badge" data-threshold="3">
-            <div class="ach-icon">
-              <svg viewBox="0 0 24 24">
-                <path d="M12 3.5L6.5 5.5V11.5C6.5 14.8 8.7 17.7 12 18.8C15.3 17.7 17.5 14.8 17.5 11.5V5.5L12 3.5Z"/>
-              </svg>
-            </div>
-            <span>Друг спины</span>
-          </div>
-          <div class="ach-badge" data-threshold="5">
-            <div class="ach-icon">
-              <svg viewBox="0 0 24 24">
-                <path d="M12 3L8 13H12L11 21L16 11H12L12 3Z"/>
-              </svg>
-            </div>
-            <span>Герой дедлайна</span>
-          </div>
-          <div class="ach-badge" data-threshold="8">
-            <div class="ach-icon">
-              <svg viewBox="0 0 24 24">
-                <path d="M9 4H15V8C15 9.7 13.7 11 12 11C10.3 11 9 9.7 9 8V4Z"/>
-                <path d="M9 4H6.5C6.2 4 6 4.2 6 4.5C6 7 7.5 9 9.5 9"/>
-                <path d="M15 4H17.5C17.8 4 18 4.2 18 4.5C18 7 16.5 9 14.5 9"/>
-                <path d="M10 14H14"/>
-                <path d="M11 14V16.5L10 18V19H14V18L13 16.5В14"/>
-              </svg>
-            </div>
-            <span>Легенда METTA</span>
+          <div class="controls">
+            <button id="startPauseBtn" class="main-btn">
+              <span>▶</span><span>Старт</span>
+            </button>
+            <button id="resetBtn" class="secondary-btn">Сброс</button>
           </div>
         </div>
-      </div>
 
-      <div class="streak">
-        <div class="streak-label">Серия дней</div>
-        <div class="streak-main">
-          <div class="streak-icon" id="streakIcon">
-            <svg viewBox="0 0 24 24">
-              <path d="M12 3C12 3 9.5 6 9.5 8.5C9.5 10 10.5 11 10.5 11C10.5 11 10 9.5 11 8.5C12 7.5 13.2 8.4 13.5 9.5C14 11.3 12.8 12.7 12 13.5C11.2 14.3 10.5 15.3 10.5 16.5C10.5 18.4 12 19.5 13.5 19.5C15.8 19.5 17.5 17.6 17.5 15C17.5 11 15 8 12 3Z"/>
-            </svg>
+        <div class="main-right">
+          <div class="achievements">
+            <div class="ach-label">Достижения сегодня</div>
+            <div class="ach-badges">
+              <div class="ach-badge" data-threshold="1">
+                <div class="ach-icon">
+                  <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="7.5"/>
+                    <circle cx="12" cy="12" r="4"/>
+                    <circle cx="12" cy="12" r="1.2"/>
+                  </svg>
+                </div>
+                <span>Новичок фокуса</span>
+              </div>
+              <div class="ach-badge" data-threshold="3">
+                <div class="ach-icon">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M12 3.5L6.5 5.5V11.5C6.5 14.8 8.7 17.7 12 18.8C15.3 17.7 17.5 14.8 17.5 11.5V5.5L12 3.5Z"/>
+                  </svg>
+                </div>
+                <span>Друг спины</span>
+              </div>
+              <div class="ach-badge" data-threshold="5">
+                <div class="ach-icon">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M12 3L8 13H12L11 21L16 11H12L12 3Z"/>
+                  </svg>
+                </div>
+                <span>Герой дедлайна</span>
+              </div>
+              <div class="ach-badge" data-threshold="8">
+                <div class="ach-icon">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M9 4H15V8C15 9.7 13.7 11 12 11C10.3 11 9 9.7 9 8V4Z"/>
+                    <path d="M9 4H6.5C6.2 4 6 4.2 6 4.5C6 7 7.5 9 9.5 9"/>
+                    <path d="M15 4H17.5C17.8 4 18 4.2 18 4.5C18 7 16.5 9 14.5 9"/>
+                    <path d="M10 14H14"/>
+                    <path d="M11 14V16.5L10 18V19H14V18L13 16.5V14"/>
+                  </svg>
+                </div>
+                <span>Легенда METTA</span>
+              </div>
+            </div>
           </div>
-          <div class="streak-text">
-            <div id="streakValue" class="streak-value">0 дней подряд</div>
-            <div id="streakStatus" class="streak-status">Начни серию сегодня</div>
+
+          <div class="streak">
+            <div class="streak-label">Серия дней</div>
+            <div class="streak-main">
+              <div class="streak-icon" id="streakIcon">
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 3C12 3 9.5 6 9.5 8.5C9.5 10 10.5 11 10.5 11C10.5 11 10 9.5 11 8.5C12 7.5 13.2 8.4 13.5 9.5C14 11.3 12.8 12.7 12 13.5C11.2 14.3 10.5 15.3 10.5 16.5C10.5 18.4 12 19.5 13.5 19.5C15.8 19.5 17.5 17.6 17.5 15C17.5 11 15 8 12 3Z"/>
+                </svg>
+              </div>
+              <div class="streak-text">
+                <div id="streakValue" class="streak-value">0 дней подряд</div>
+                <div id="streakStatus" class="streak-status">Начни серию сегодня</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -838,8 +854,8 @@
     const phaseModalBtn = document.getElementById('phaseModalBtn');
 
     const timerCircle = document.querySelector('.timer-circle');
-    const timerClip = document.querySelector('.timer-clip');
-    const timerFill = document.getElementById('timerFill');
+    const timerSvg = document.querySelector('.timer-svg');
+    const waterRect = document.getElementById('waterRect');
 
     let audioCtx = null;
     function playNotificationSound() {
@@ -1010,7 +1026,6 @@
 
         updateStreakDisplay(streak);
       } catch (e) {
-        updateStreakDisplay(1);
       }
     }
 
@@ -1041,12 +1056,17 @@
     }
 
     function updateTimerFill() {
-      if (!timerFill || !totalSecondsCurrentPhase || totalSecondsCurrentPhase <= 0) return;
+      if (!waterRect || !totalSecondsCurrentPhase || totalSecondsCurrentPhase <= 0) return;
 
       const elapsed = totalSecondsCurrentPhase - remainingSeconds;
       const ratio = Math.max(0, Math.min(1, elapsed / totalSecondsCurrentPhase));
 
-      timerFill.style.height = (ratio * 100).toFixed(2) + "%";
+      const fullH = 200; // высота viewBox
+      const h = fullH * ratio;
+      const y = fullH - h;
+
+      waterRect.setAttribute("height", h);
+      waterRect.setAttribute("y", y);
 
       if (ratio >= 0.5) {
         timerCircle.classList.add('over-water');
@@ -1119,19 +1139,17 @@
       startTimer();
     }
 
-    // --- «Жидкий» наклон при повороте телефона ---
+    // лёгкий «наклон воды» при повороте устройства
     let tiltInitialized = false;
     function handleOrientation(event) {
-      // gamma — наклон влево/вправо
       const gamma = event.gamma || 0;
-      const maxTilt = 20; // градусы, которые считаем максимальными
+      const maxTilt = 20;
       const clamped = Math.max(-maxTilt, Math.min(maxTilt, gamma));
-      const angle = clamped * 0.5; // делаем эффект мягче
+      const angle = clamped * 0.5;
 
-      if (timerClip) {
-        timerClip.style.transform = `rotate(${angle}deg)`;
+      if (timerSvg) {
+        timerSvg.style.transform = `rotate(${angle}deg)`;
       }
-      // текст оставляем визуально ровным
       timerEl.style.transform = `rotate(${-angle}deg)`;
       phaseLabelEl.style.transform = `rotate(${-angle}deg)`;
     }
@@ -1142,7 +1160,6 @@
 
       if (typeof DeviceOrientationEvent !== "undefined" &&
           typeof DeviceOrientationEvent.requestPermission === "function") {
-        // iOS — нужно разрешение
         DeviceOrientationEvent.requestPermission()
           .then(state => {
             if (state === "granted") {
@@ -1151,11 +1168,9 @@
           })
           .catch(() => {});
       } else if (typeof DeviceOrientationEvent !== "undefined") {
-        // Android / другие
         window.addEventListener("deviceorientation", handleOrientation);
       }
     }
-    // --- конец блока про наклон ---
 
     function startTimer() {
       if (isRunning) return;
@@ -1206,9 +1221,7 @@
     }
 
     startPauseBtn.addEventListener('click', () => {
-      // при первом нажатии на Старт пытаемся включить наклон
-      initTiltOnce();
-
+      initTiltOnce(); // при первом старте просим доступ к датчику
       if (isRunning) {
         pauseTimer();
       } else {
