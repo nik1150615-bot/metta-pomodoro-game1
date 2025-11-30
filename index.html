@@ -516,32 +516,35 @@
                   background 0.25s ease-out;
     }
 
-    .streak-icon svg {
-      width: 16px;
-      height: 16px;
-      fill: none;
-      stroke-width: 1.6;
-      stroke: #6b7280;
+    /* ОГОНЁК 🔥 + дыхание */
+    #streakFire {
+      font-size: 22px;
+      transition:
+        font-size 0.25s ease-out,
+        filter 0.25s ease-out;
+      filter: drop-shadow(0 0 4px rgba(249,115,22,0.6));
+      animation: fire-breath 1.8s ease-in-out infinite;
+      transform-origin: center;
+      display: inline-block;
     }
 
-    .streak-icon.low svg  { stroke: #6b7280; }
-    .streak-icon.mid {
-      transform: scale(1.1);
-      background: radial-gradient(circle at 30% 0, #7c2d12 0, #f97316 60%);
-      box-shadow:
-        0 0 0 1px #7c2d12,
-        0 0 18px rgba(249,115,22,0.8);
+    @keyframes fire-breath {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50%      { transform: translateY(-1px) scale(1.06); }
     }
-    .streak-icon.mid svg  { stroke: #fed7aa; }
 
-    .streak-icon.high {
-      transform: scale(1.18);
-      background: radial-gradient(circle at 30% 0, #f97316 0, #facc15 60%);
-      box-shadow:
-        0 0 0 1px #f97316,
-        0 0 24px rgba(251,191,36,0.9);
+    .streak-icon.low  #streakFire {
+      /* лёгкое свечение, базовое */
+      filter: drop-shadow(0 0 4px rgba(249,115,22,0.7));
     }
-    .streak-icon.high svg { stroke: #fffbeb; }
+
+    .streak-icon.mid  #streakFire {
+      filter: drop-shadow(0 0 8px rgba(249,115,22,0.9));
+    }
+
+    .streak-icon.high #streakFire {
+      filter: drop-shadow(0 0 12px rgba(234,179,8,1));
+    }
 
     .streak-text {
       display: flex;
@@ -1085,9 +1088,7 @@
         <div class="streak-label">Серия дней</div>
         <div class="streak-main" id="streakMain">
           <div class="streak-icon" id="streakIcon">
-            <svg viewBox="0 0 24 24">
-              <path d="M12 3C12 3 9.5 6 9.5 8.5C9.5 10 10.5 11 10.5 11C10.5 11 10 9.5 11 8.5C12 7.5 13.2 8.4 13.5 9.5C14 11.3 12.8 12.7 12 13.5C11.2 14.3 10.5 15.3 10.5 16.5C10.5 18.4 12 19.5 13.5 19.5C15.8 19.5 17.5 17.6 17.5 15C17.5 11 15 8 12 3Z"/>
-            </svg>
+            <span id="streakFire">🔥</span>
           </div>
           <div class="streak-text">
             <div id="streakValue" class="streak-value">0 дней подряд</div>
@@ -1197,6 +1198,8 @@
     let cycles = 0;
     let pendingPhase = null;
 
+    let isCustomModeActive = false;
+
     const STREAK_DATE_KEY = "metta_streak_date";
     const STREAK_VALUE_KEY = "metta_streak_value";
     const STREAK_LAST_UPDATED_KEY = "metta_streak_updated";
@@ -1249,14 +1252,52 @@
     const genderFemaleBtn = document.getElementById('genderFemale');
 
     let audioCtx = null;
+
+    function ensureAudioCtx() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === "suspended") {
+        audioCtx.resume();
+      }
+    }
+
+    function vibrate(pattern = 20) {
+      try {
+        if (navigator.vibrate) {
+          navigator.vibrate(pattern);
+        }
+      } catch (e) {}
+    }
+
+    // маленький "тап"-звук
+    function playTapSound() {
+      try {
+        ensureAudioCtx();
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(520, now);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(0.14, now + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.15);
+        osc.start(now);
+        osc.stop(now + 0.18);
+      } catch (e) {}
+    }
+
+    function tactileTap() {
+      playTapSound();
+      vibrate(25);
+    }
+
+    // звук при смене фазы
     function playNotificationSound() {
       try {
-        if (!audioCtx) {
-          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        if (audioCtx.state === "suspended") {
-          audioCtx.resume();
-        }
+        ensureAudioCtx();
 
         function beep(atTime, freq) {
           const o = audioCtx.createOscillator();
@@ -1276,10 +1317,17 @@
         beep(now, 880);
         beep(now + 0.5, 880);
         beep(now + 1.0, 880);
+        vibrate([40, 30, 40]); // чуть сильнее при смене фазы
       } catch (e) {}
     }
 
-    const focusTips = [
+    function isPortrait() {
+      return window.matchMedia &&
+             window.matchMedia("(orientation: portrait)").matches;
+    }
+
+    // советы: длинные и компактные (для "Свой режим" в портрете)
+    const focusTipsFull = [
       "Следи, чтобы поясница опиралась на спинку — не тянись корпусом к экрану.",
       "Отрегулируй высоту кресла так, чтобы стопы стояли полностью на полу.",
       "Экран должен быть на уровне глаз — шея скажет спасибо.",
@@ -1287,7 +1335,7 @@
       "Если работаешь за ноутбуком — подними его на подставку, а не шею."
     ];
 
-    const breakTips = [
+    const breakTipsFull = [
       "Встань, пройди несколько шагов и сделай 3–5 кругов плечами вперёд-назад.",
       "Медленно наклони голову вправо-влево, без резких движений.",
       "Подними руки вверх, потянись и сделай глубокий вдох-выдох.",
@@ -1295,11 +1343,44 @@
       "Потряси кистями, разомни пальцы — они тоже работают весь день."
     ];
 
+    // компакт ≤ ~42 символов (без слова «Совет:» / «Перерыв:»)
+    const focusTipsShort = [
+      "Плотно прижми поясницу к спинке.",
+      "Колени под углом ~90°, стопы на полу.",
+      "Экран держи на уровне глаз.",
+      "Опусти плечи вниз, расслабь шею.",
+      "Ноутбук подними, а не шею."
+    ];
+
+    const breakTipsShort = [
+      "Пройди пару шагов и разомни плечи.",
+      "Медленно наклони голову вправо-влево.",
+      "Потянись вверх и глубоко вдохни.",
+      "Сделай несколько шагов и глянь вдаль.",
+      "Потряси кистями и разомни пальцы."
+    ];
+
+    function getActiveFocusTips() {
+      return isCustomModeActive && isPortrait() ? focusTipsShort : focusTipsFull;
+    }
+
+    function getActiveBreakTips() {
+      return isCustomModeActive && isPortrait() ? breakTipsShort : breakTipsFull;
+    }
+
     let focusTipIndex = 0;
     let breakTipIndex = 0;
 
     function getCurrentTip() {
-      return isFocus ? focusTips[focusTipIndex] : breakTips[breakTipIndex];
+      if (isFocus) {
+        const list = getActiveFocusTips();
+        const idx = focusTipIndex % list.length;
+        return list[idx];
+      } else {
+        const list = getActiveBreakTips();
+        const idx = breakTipIndex % list.length;
+        return list[idx];
+      }
     }
 
     function updateTipText() {
@@ -1311,9 +1392,11 @@
 
     function nextTip() {
       if (isFocus) {
-        focusTipIndex = (focusTipIndex + 1) % focusTips.length;
+        const list = getActiveFocusTips();
+        focusTipIndex = (focusTipIndex + 1) % list.length;
       } else {
-        breakTipIndex = (breakTipIndex + 1) % breakTips.length;
+        const list = getActiveBreakTips();
+        breakTipIndex = (breakTipIndex + 1) % list.length;
       }
       updateTipText();
     }
@@ -1326,6 +1409,11 @@
       }
       updateTipText();
     }
+
+    window.addEventListener("resize", () => {
+      // при смене ориентации пересчитать массивы советов
+      updateTipText();
+    });
 
     function formatTime(sec) {
       const m = Math.floor(sec / 60);
@@ -1373,6 +1461,25 @@
         statusText = "Это уже привычка. Ты реально заботишься о себе.";
       }
       streakStatusEl.textContent = statusText;
+
+      // 🔥 рост и яркость огня по мере серии
+      const fireEl = document.getElementById('streakFire');
+      if (fireEl) {
+        const maxRef = 15;
+        const clamped = Math.max(0, Math.min(streak, maxRef));
+        const baseSize = 22;
+        const maxExtra = 14;
+        const size = baseSize + (maxExtra * (clamped / maxRef));
+        fireEl.style.fontSize = size + "px";
+
+        const baseGlow = 4;
+        const maxGlow = 12;
+        const glow = baseGlow + (maxGlow - baseGlow) * (clamped / maxRef);
+        const color = streak >= 8
+          ? 'rgba(234,179,8,1)'
+          : 'rgba(249,115,22,0.95)';
+        fireEl.style.filter = `drop-shadow(0 0 ${glow}px ${color})`;
+      }
     }
 
     function getStreakPraise(streak) {
@@ -1449,7 +1556,7 @@
         if (!hit && newStreak <= 30) return;
         if (newStreak > 30 && !(prevStreak < newStreak)) return;
 
-        const svg = streakIconEl.querySelector('svg')?.outerHTML || "";
+        const svg = streakIconEl.querySelector('span')?.outerHTML || "";
 
         openInfoModal({
           svgHTML: svg,
@@ -1626,9 +1733,7 @@
       isRunning = true;
       startPauseBtn.innerHTML = "<span>⏸</span><span>Пауза</span>";
 
-      if (audioCtx && audioCtx.state === "suspended") {
-        audioCtx.resume();
-      }
+      ensureAudioCtx();
 
       timerInterval = setInterval(() => {
         remainingSeconds--;
@@ -1711,13 +1816,13 @@
         localStorage.setItem(GENDER_KEY, gender);
       } catch (e) {}
       genderModal.classList.add("hidden");
-      // обновим текст серии с учётом пола
       updateStreakDisplay(currentStreak);
     }
 
     // --- Обработчики ---
 
     startPauseBtn.addEventListener('click', () => {
+      tactileTap();
       if (isRunning) {
         pauseTimer();
       } else {
@@ -1726,17 +1831,22 @@
     });
 
     resetBtn.addEventListener('click', () => {
+      tactileTap();
       resetTimer();
     });
 
     modeButtons.forEach(btn => {
       btn.addEventListener('click', () => {
+        tactileTap();
         modeButtons.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
 
         if (btn === customModeBtn) {
+          isCustomModeActive = true;
           customInputs.style.display = 'flex';
+          resetTipIndexForPhase();
         } else {
+          isCustomModeActive = false;
           customInputs.style.display = 'none';
           workMinutes = parseInt(btn.dataset.work, 10);
           breakMinutes = parseInt(btn.dataset.break, 10);
@@ -1746,6 +1856,7 @@
     });
 
     applyCustomBtn.addEventListener('click', () => {
+      tactileTap();
       const w = parseInt(customWorkInput.value, 10);
       const b = parseInt(customBreakInput.value, 10);
       if (!isNaN(w) && !isNaN(b) && w > 0 && b > 0) {
@@ -1756,16 +1867,19 @@
     });
 
     nextTipBtn.addEventListener('click', () => {
+      tactileTap();
       nextTip();
     });
 
     phaseModalBtn.addEventListener('click', () => {
+      tactileTap();
       confirmPhaseChange();
     });
 
     // Клики по достижениям
     achBadges.forEach(badge => {
       badge.addEventListener('click', () => {
+        tactileTap();
         const threshold = parseInt(badge.getAttribute('data-threshold'), 10);
         const earned = cycles >= threshold;
         const svg = badge.querySelector('svg')?.outerHTML || "";
@@ -1788,6 +1902,7 @@
 
     // Клик по "Фишка METTA"
     featurePill.addEventListener('click', () => {
+      tactileTap();
       const svg = `
         <svg viewBox="0 0 24 24">
           <path d="M7 4C7 4 9 7 9 9C9 10.5 8 12 8 13.5C8 15.5 9.5 17 12 17C14.5 17 16 15.5 16 13.5C16 12 15 10.5 15 9C15 7 17 4 17 4" />
@@ -1804,10 +1919,11 @@
 
     // Клик по серии дней
     streakMain.addEventListener('click', () => {
+      tactileTap();
       let streak = parseInt(localStorage.getItem(STREAK_VALUE_KEY) || "0", 10);
       if (!isFinite(streak) || streak < 0) streak = 0;
 
-      const svg = streakIconEl.querySelector('svg')?.outerHTML || "";
+      const svg = streakIconEl.querySelector('span')?.outerHTML || "";
       const statusText = `${streak} ${pluralRu(streak, ["день подряд", "дня подряд", "дней подряд"])}`;
 
       openInfoModal({
@@ -1821,14 +1937,27 @@
       });
     });
 
-    infoCloseBtn.addEventListener('click', closeInfoModal);
+    infoCloseBtn.addEventListener('click', () => {
+      tactileTap();
+      closeInfoModal();
+    });
+
     infoModal.addEventListener('click', (e) => {
-      if (e.target === infoModal) closeInfoModal();
+      if (e.target === infoModal) {
+        tactileTap();
+        closeInfoModal();
+      }
     });
 
     // Выбор пола
-    genderMaleBtn.addEventListener('click', () => setGender("male"));
-    genderFemaleBtn.addEventListener('click', () => setGender("female"));
+    genderMaleBtn.addEventListener('click', () => {
+      tactileTap();
+      setGender("male");
+    });
+    genderFemaleBtn.addEventListener('click', () => {
+      tactileTap();
+      setGender("female");
+    });
 
     // Стартовое состояние
     loadGenderFromStorage();
