@@ -1149,8 +1149,12 @@
     }
 
     body.light-theme .mode-btn.active {
-      background: #22c55e;
-      color: #022c22;
+      background: #3b82f6;
+      color: #eff6ff;
+      border-color: #2563eb;
+      box-shadow:
+        0 0 0 1px rgba(59,130,246,0.9),
+        0 0 18px rgba(59,130,246,0.6);
     }
 
     body.light-theme .custom-inputs input,
@@ -1168,11 +1172,12 @@
       color: #4b5563;
     }
 
+    /* голубой таймер-круг в светлой теме */
     body.light-theme .timer-circle {
-      background: radial-gradient(circle at 30% 0, #e5e7eb 0, #d1d5db 55%, #cbd5e1 100%);
+      background: radial-gradient(circle at 30% 0, #dbeafe 0, #bfdbfe 45%, #93c5fd 100%);
       box-shadow:
-        inset 0 0 0 1px rgba(148,163,184,0.9),
-        0 10px 26px rgba(148,163,184,0.9);
+        inset 0 0 0 1px rgba(147,197,253,0.9),
+        0 10px 26px rgba(147,197,253,0.8);
     }
 
     body.light-theme .timer {
@@ -1183,10 +1188,20 @@
       color: #4b5563;
     }
 
+    /* голубой вариант всех кнопок в светлой теме */
+
+    body.light-theme button.main-btn {
+      background: #3b82f6;
+      color: #f9fafb;
+      box-shadow:
+        0 0 0 1px rgba(37,99,235,0.9),
+        0 8px 24px rgba(59,130,246,0.55);
+    }
+
     body.light-theme button.secondary-btn {
-      background: #f9fafb;
-      color: #111827;
-      border-color: #cbd5e1;
+      background: #eff6ff;
+      color: #1f2937;
+      border-color: #bfdbfe;
     }
 
     body.light-theme .ach-label,
@@ -1277,9 +1292,9 @@
     }
 
     body.light-theme .settings-pill-active {
-      background: #dcfce7;
-      color: #064e3b;
-      border-color: #16a34a;
+      background: #dbeafe;
+      color: #1d4ed8;
+      border-color: #2563eb;
     }
 
     body.light-theme .gender-btn {
@@ -1375,16 +1390,21 @@
         <div class="timer-circle">
           <svg class="timer-svg" viewBox="0 0 200 200" aria-hidden="true">
             <defs>
-              <linearGradient id="waterGradient" x1="0" y1="0" x2="0" y2="1">
+              <!-- две заливки: тёмная (зелёная) и светлая (голубая) -->
+              <linearGradient id="waterGradientDark" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stop-color="#22c55e"/>
                 <stop offset="100%" stop-color="#16a34a"/>
+              </linearGradient>
+              <linearGradient id="waterGradientLight" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#bfdbfe"/>
+                <stop offset="100%" stop-color="#60a5fa"/>
               </linearGradient>
               <clipPath id="waterClip">
                 <circle cx="100" cy="100" r="100"></circle>
               </clipPath>
             </defs>
             <g clip-path="url(#waterClip)">
-              <rect id="waterRect" x="0" y="200" width="200" height="0" fill="url(#waterGradient)"></rect>
+              <rect id="waterRect" x="0" y="200" width="200" height="0" fill="url(#waterGradientDark)"></rect>
             </g>
           </svg>
           <div id="timer" class="timer">25:00</div>
@@ -1629,6 +1649,7 @@
         } catch (e) {}
       }
       updateSettingsThemeButtons();
+      updateWaterGradientForTheme();
     }
 
     let workMinutes = 25;
@@ -2298,6 +2319,16 @@
       settingsModal.classList.add("hidden");
     }
 
+    // переключение градиента воды по теме
+    function updateWaterGradientForTheme() {
+      if (!waterRect) return;
+      if (currentTheme === "light") {
+        waterRect.setAttribute("fill", "url(#waterGradientLight)");
+      } else {
+        waterRect.setAttribute("fill", "url(#waterGradientDark)");
+      }
+    }
+
     // Онбординг / тур
     const tourSteps = [
       {
@@ -2314,7 +2345,7 @@
       },
       {
         title: "Фишка METTA и настройки",
-        body: "Нажми «Фишка METTA», чтобы узнать про гибкий «позвоночник» спинки, а через значок ⚙ можно сменить тему и обращение."
+        body: "Нажми «Фишка METTA», чтобы узнать про гибкий «позвоночник» спинки, а через значок ⚙ можно сменить тему (тёмную или светлую) и обращение."
       }
     ];
 
@@ -2565,6 +2596,7 @@
     resetTipIndexForPhase();
     updateDisplay();
     initStreak();
+    updateWaterGradientForTheme();
 
     // если пола ещё нет — спросим, иначе можем сразу подсказать тур
     showGenderModalIfNeeded();
