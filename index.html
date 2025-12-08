@@ -273,7 +273,7 @@
       border-color: #22c55e;
       box-shadow:
         0 0 0 1px rgba(34, 197, 94, 0.85),
-        0 0 18px rgba(34, 197, 94, 0.55);
+        0 0 18pxrgba(34, 197, 94, 0.55);
     }
 
     .custom-inputs {
@@ -1108,8 +1108,13 @@
         0 0 0 1px rgba(191,219,254,0.9);
     }
 
+    /* Фишка METTA — более тёмный текст в светлой теме */
+    body.light-theme .feature-title {
+      color: #111827;
+    }
+
     body.light-theme .feature-text {
-      color: #4b5563;
+      color: #111827;
     }
 
     body.light-theme .logo-mark {
@@ -1186,6 +1191,13 @@
 
     body.light-theme .phase-label {
       color: #4b5563;
+    }
+
+    /* Текст поверх тёмной "воды" в светлой теме — делаем светлым */
+    body.light-theme .timer-circle.over-water .timer,
+    body.light-theme .timer-circle.over-water .phase-label {
+      color: #f9fafb;
+      text-shadow: 0 0 10px rgba(15,23,42,0.9);
     }
 
     /* голубой вариант всех кнопок в светлой теме */
@@ -1395,9 +1407,10 @@
                 <stop offset="0%" stop-color="#22c55e"/>
                 <stop offset="100%" stop-color="#16a34a"/>
               </linearGradient>
+              <!-- СТАЛО: более тёмная вода в светлой теме -->
               <linearGradient id="waterGradientLight" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#bfdbfe"/>
-                <stop offset="100%" stop-color="#60a5fa"/>
+                <stop offset="0%" stop-color="#3b82f6"/>
+                <stop offset="100%" stop-color="#1d4ed8"/>
               </linearGradient>
               <clipPath id="waterClip">
                 <circle cx="100" cy="100" r="100"></circle>
@@ -1658,7 +1671,7 @@
     let totalSecondsCurrentPhase = remainingSeconds;
     let isFocus = true;
     let isRunning = false;
-    let timerInterval = null;
+       let timerInterval = null;
     let cycles = 0;
     let pendingPhase = null;
 
@@ -2349,260 +2362,4 @@
       }
     ];
 
-    let tourIndex = 0;
-
-    function renderTourStep() {
-      const total = tourSteps.length;
-      if (tourIndex < 0) tourIndex = 0;
-      if (tourIndex >= total) tourIndex = total - 1;
-      const step = tourSteps[tourIndex];
-      tourStepCountEl.textContent = `Шаг ${tourIndex + 1} из ${total}`;
-      tourTitleEl.textContent = step.title;
-      tourBodyEl.textContent = step.body;
-      tourNextBtn.textContent = tourIndex === total - 1 ? "Готово" : "Дальше";
-    }
-
-    function openTour() {
-      tourIndex = 0;
-      renderTourStep();
-      tourModal.classList.remove("hidden");
-    }
-
-    function closeTour(markSeen = true) {
-      tourModal.classList.add("hidden");
-      if (markSeen) {
-        try {
-          localStorage.setItem(ONBOARDING_KEY, "1");
-        } catch (e) {}
-      }
-    }
-
-    function maybeStartTourAuto() {
-      try {
-        const seen = localStorage.getItem(ONBOARDING_KEY);
-        if (seen === "1") return;
-        if (!userGender) return;
-        openTour();
-      } catch (e) {}
-    }
-
-    // --- Обработчики ---
-
-    startPauseBtn.addEventListener('click', () => {
-      tactileTap();
-      if (isRunning) {
-        pauseTimer();
-      } else {
-        startTimer();
-      }
-    });
-
-    resetBtn.addEventListener('click', () => {
-      tactileTap();
-      resetTimer();
-    });
-
-    modeButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        tactileTap();
-        modeButtons.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-
-        if (btn === customModeBtn) {
-          isCustomModeActive = true;
-          customInputs.style.display = 'flex';
-          resetTipIndexForPhase();
-        } else {
-          isCustomModeActive = false;
-          customInputs.style.display = 'none';
-          workMinutes = parseInt(btn.dataset.work, 10);
-          breakMinutes = parseInt(btn.dataset.break, 10);
-          resetTimer();
-        }
-      });
-    });
-
-    applyCustomBtn.addEventListener('click', () => {
-      tactileTap();
-      const w = parseInt(customWorkInput.value, 10);
-      const b = parseInt(customBreakInput.value, 10);
-      if (!isNaN(w) && !isNaN(b) && w > 0 && b > 0) {
-        workMinutes = w;
-        breakMinutes = b;
-        resetTimer();
-      }
-    });
-
-    nextTipBtn.addEventListener('click', () => {
-      tactileTap();
-      nextTip();
-    });
-
-    phaseModalBtn.addEventListener('click', () => {
-      tactileTap();
-      confirmPhaseChange();
-    });
-
-    achBadges.forEach(badge => {
-      badge.addEventListener('click', () => {
-        tactileTap();
-        const threshold = parseInt(badge.getAttribute('data-threshold'), 10);
-        const earned = cycles >= threshold;
-        const svg = badge.querySelector('svg')?.outerHTML || "";
-        const title = badge.getAttribute('data-title') || "";
-        const desc = badge.getAttribute('data-desc') || "";
-
-        const statusText = earned
-          ? "Достижение получено сегодня 🎉"
-          : `Пока не получено. Нужно завершить ${threshold} ${pluralRu(threshold, ["цикл", "цикла", "циклов"])} за день.`;
-
-        openInfoModal({
-          svgHTML: svg,
-          title,
-          statusText,
-          statusEarned: earned,
-          body: desc
-        });
-      });
-    });
-
-    featurePill.addEventListener('click', () => {
-      tactileTap();
-      const svg = `
-        <svg viewBox="0 0 24 24">
-          <path d="M7 4C7 4 9 7 9 9C9 10.5 8 12 8 13.5C8 15.5 9.5 17 12 17C14.5 17 16 15.5 16 13.5C16 12 15 10.5 15 9C15 7 17 4 17 4" />
-        </svg>
-      `;
-      openInfoModal({
-        svgHTML: svg,
-        title: "Фишка METTA",
-        statusText: "Гибкий «позвоночник» спинки",
-        statusEarned: null,
-        body: "Спинка кресел METTA повторяет естественные изгибы позвоночника и мягко двигается вместе с тобой. За счёт этого меньше нагрузка на поясницу и проще сидеть долго без ощущения «каменной» спины."
-      });
-    });
-
-    streakMain.addEventListener('click', () => {
-      tactileTap();
-      let streak = parseInt(localStorage.getItem(STREAK_VALUE_KEY) || "0", 10);
-      if (!isFinite(streak) || streak < 0) streak = 0;
-
-      const svg = streakIconEl.querySelector('span')?.outerHTML || "";
-      const statusText = `${streak} ${pluralRu(streak, ["день подряд", "дня подряд", "дней подряд"])}`;
-
-      openInfoModal({
-        svgHTML: svg,
-        title: "Серия дней",
-        statusText,
-        statusEarned: streak > 0,
-        body: streak > 0
-          ? getStreakPraise(streak)
-          : "Как только запустишь таймер несколько дней подряд, здесь появится твоя серия и уважение за стабильность."
-      });
-    });
-
-    infoCloseBtn.addEventListener('click', () => {
-      tactileTap();
-      closeInfoModal();
-    });
-
-    infoModal.addEventListener('click', (e) => {
-      if (e.target === infoModal) {
-        tactileTap();
-        closeInfoModal();
-      }
-    });
-
-    genderMaleBtn.addEventListener('click', () => {
-      tactileTap();
-      setGender("male");
-    });
-    genderFemaleBtn.addEventListener('click', () => {
-      tactileTap();
-      setGender("female");
-    });
-
-    // Настройки
-    settingsBtn.addEventListener('click', () => {
-      tactileTap();
-      openSettingsModal();
-    });
-
-    settingsCloseBtn.addEventListener('click', () => {
-      tactileTap();
-      closeSettingsModal();
-    });
-
-    settingsModal.addEventListener('click', (e) => {
-      if (e.target === settingsModal) {
-        tactileTap();
-        closeSettingsModal();
-      }
-    });
-
-    themeDarkBtn.addEventListener('click', () => {
-      tactileTap();
-      applyTheme("dark");
-    });
-
-    themeLightBtn.addEventListener('click', () => {
-      tactileTap();
-      applyTheme("light");
-    });
-
-    settingsGenderMale.addEventListener('click', () => {
-      tactileTap();
-      setGender("male");
-    });
-
-    settingsGenderFemale.addEventListener('click', () => {
-      tactileTap();
-      setGender("female");
-    });
-
-    settingsTourBtn.addEventListener('click', () => {
-      tactileTap();
-      closeSettingsModal();
-      openTour();
-    });
-
-    // Онбординг
-    tourNextBtn.addEventListener('click', () => {
-      tactileTap();
-      tourIndex++;
-      if (tourIndex >= tourSteps.length) {
-        closeTour(true);
-      } else {
-        renderTourStep();
-      }
-    });
-
-    tourSkipBtn.addEventListener('click', () => {
-      tactileTap();
-      closeTour(true);
-    });
-
-    tourModal.addEventListener('click', (e) => {
-      if (e.target === tourModal) {
-        tactileTap();
-        closeTour(true);
-      }
-    });
-
-    // Стартовое состояние
-    loadGenderFromStorage();
-    loadThemeFromStorage();
-    initCyclesToday();
-    resetTipIndexForPhase();
-    updateDisplay();
-    initStreak();
-    updateWaterGradientForTheme();
-
-    // если пола ещё нет — спросим, иначе можем сразу подсказать тур
-    showGenderModalIfNeeded();
-    if (userGender) {
-      maybeStartTourAuto();
-    }
-  </script>
-</body>
-</html>
+    let tourIndex = 0
