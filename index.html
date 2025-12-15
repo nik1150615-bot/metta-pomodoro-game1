@@ -1,2365 +1,274 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <title>METTA Pomodoro Game</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    * { box-sizing: border-box; }
-
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      padding: 0;
-      margin: 0;
-      min-height: 100vh;
-      background: radial-gradient(circle at top, #0b1220 0, #020617 45%, #020617 100%);
-      color: #e5e7eb;
-      display: flex;
-      justify-content: center;
-      transition: background 0.25s ease-out, color 0.25s ease-out;
-    }
-
-    .shell {
-      width: 100%;
-      max-width: 480px;
-      padding: 12px 10px;
-    }
-
-    .card {
-      width: 100%;
-      height: calc(100vh - 24px);
-      max-height: 780px;
-      background: #020617;
-      border-radius: 20px;
-      padding: 18px 18px 14px;
-      box-shadow:
-        0 24px 60px rgba(15, 23, 42, 0.85),
-        0 0 0 1px rgba(30, 64, 175, 0.7);
-      border: 1px solid rgba(148, 163, 184, 0.35);
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      overflow: hidden;
-      transition: background 0.25s ease-out, box-shadow 0.25s ease-out, border-color 0.25s ease-out;
-    }
-
-    .header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 6px;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: rgba(30, 64, 175, 0.25);
-      color: #c7d2fe;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      font-weight: 600;
-    }
-
-    .badge-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background: #22c55e;
-      box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.18);
-    }
-
-    h1 {
-      font-size: 20px;
-      text-align: left;
-      margin: 0;
-      color: #e5e7eb;
-    }
-
-    .subtitle {
-      font-size: 13px;
-      color: #9ca3af;
-      text-align: left;
-      margin-bottom: 4px;
-      max-width: 260px;
-    }
-
-    /* ФИШКА METTA */
-
-    .feature {
-      margin-bottom: 6px;
-    }
-
-    .feature-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 5px 12px;
-      border-radius: 999px;
-      background: radial-gradient(circle at 0 0, rgba(59,130,246,0.5), transparent 55%);
-      border: 1px solid rgba(59, 130, 246, 0.5);
-      box-shadow:
-        0 0 18px rgba(59, 130, 246, 0.4),
-        0 0 0 1px rgba(15, 23, 42, 0.9);
-      font-size: 11px;
-      color: #e5e7eb;
-      cursor: pointer;
-    }
-
-    .feature-pill:hover {
-      box-shadow:
-        0 0 24px rgba(59, 130, 246, 0.6),
-        0 0 0 1px rgba(129, 140, 248, 0.8);
-    }
-
-    .feature-icon {
-      width: 22px;
-      height: 22px;
-      border-radius: 999px;
-      background: radial-gradient(circle at 30% 20%, #111827 0, #020617 70%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 10px rgba(59,130,246,0.7);
-    }
-
-    .feature-spine {
-      width: 10px;
-      height: 14px;
-      position: relative;
-      transform-origin: center;
-      animation: spine-wave 1.6s ease-in-out infinite;
-    }
-
-    .feature-spine span {
-      position: absolute;
-      left: 2px;
-      right: 2px;
-      height: 3px;
-      border-radius: 999px;
-      background: #60a5fa;
-      box-shadow: 0 0 6px rgba(96,165,250,0.9);
-    }
-
-    .feature-spine span:nth-child(1) { top: 0; }
-    .feature-spine span:nth-child(2) { top: 5px; }
-    .feature-spine span:nth-child(3) { top: 10px; }
-
-    @keyframes spine-wave {
-      0%, 100% { transform: translateY(0) rotate(-4deg); }
-      50%      { transform: translateY(-1px) rotate(3deg); }
-    }
-
-    .feature-text-wrap {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .feature-title {
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      font-weight: 600;
-      color: #bfdbfe;
-    }
-
-    .feature-text {
-      color: #9ca3af;
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      min-width: 90px;
-      justify-content: flex-end;
-    }
-
-    .logo-mark {
-      width: 28px;
-      height: 28px;
-      border-radius: 999px;
-      background: radial-gradient(circle at 30% 20%, #111827 0, #020617 70%);
-      color: #e5e7eb;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 16px;
-      box-shadow:
-        0 4px 12px rgba(15, 23, 42, 0.9),
-        0 0 0 1px rgba(148, 163, 184, 0.45);
-    }
-
-    .logo-text { text-align: left; }
-
-    .logo-brand {
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: #f9fafb;
-      line-height: 1.1;
-    }
-
-    .logo-sub {
-      font-size: 9px;
-      color: #6b7280;
-      text-transform: uppercase;
-      letter-spacing: 0.09em;
-    }
-
-    .settings-btn {
-      margin-left: 6px;
-      width: 26px;
-      height: 26px;
-      border-radius: 999px;
-      border: 1px solid rgba(75,85,99,0.9);
-      background: #020617;
-      color: #e5e7eb;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      cursor: pointer;
-      box-shadow: 0 0 0 1px rgba(15,23,42,0.9);
-      padding: 0;
-    }
-
-    .settings-btn:hover {
-      box-shadow:
-        0 0 0 1px rgba(148,163,184,0.9),
-        0 0 14px rgba(59,130,246,0.6);
-    }
-
-    .modes {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 6px;
-      flex-wrap: wrap;
-      justify-content: flex-start;
-    }
-
-    .mode-btn {
-      padding: 6px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(55, 65, 81, 0.9);
-      background: #020617;
-      font-size: 13px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      color: #e5e7eb;
-      box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.8);
-    }
-
-    .mode-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      background: #22c55e;
-      box-shadow: 0 0 12px rgba(34, 197, 94, 0.7);
-      display: inline-block;
-    }
-
-    .mode-btn.active {
-      background: #22c55e;
-      color: #020617;
-      border-color: #22c55e;
-      box-shadow:
-        0 0 0 1px rgba(34, 197, 94, 0.85),
-        0 0 18pxrgba(34, 197, 94, 0.55);
-    }
-
-    .custom-inputs {
-      margin-top: 4px;
-      display: none;
-      gap: 6px;
-      justify-content: flex-start;
-      flex-wrap: wrap;
-      margin-bottom: 2px;
-    }
-
-    .custom-inputs input {
-      width: 92px;
-      padding: 5px 8px;
-      font-size: 12px;
-      border-radius: 999px;
-      border: 1px solid #374151;
-      outline: none;
-      background: #020617;
-      color: #e5e7eb;
-    }
-
-    .custom-inputs input::placeholder { color: #6b7280; }
-    .custom-inputs input:focus { border-color: #22c55e; }
-
-    .custom-inputs button {
-      padding: 5px 10px;
-      font-size: 12px;
-      border-radius: 999px;
-      border: 1px solid #4b5563;
-      background: #020617;
-      cursor: pointer;
-      color: #e5e7eb;
-    }
-
-    .status-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin: 6px 0 4px;
-    }
-
-    .status {
-      font-size: 13px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .status-pill {
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-    }
-
-    .status.focus .status-pill { background: #22c55e; }
-    .status.break .status-pill { background: #38bdf8; }
-
-    .status-label { font-weight: 600; }
-    .status.focus .status-label { color: #4ade80; }
-    .status.break .status-label { color: #38bdf8; }
-
-    .cycles {
-      font-size: 12px;
-      color: #9ca3af;
-      text-align: right;
-    }
-
-    .timer-wrap {
-      margin: 4px 0 4px;
-      display: flex;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .timer-circle {
-      width: 200px;
-      height: 200px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 30% 0, #1f2937 0, #020617 55%, #020617 100%);
-      box-shadow:
-        inset 0 0 0 1px rgba(55, 65, 81, 0.8),
-        0 10px 40px rgba(0, 0, 0, 0.9);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      overflow: visible;
-      transition: background 0.25s ease-out, box-shadow 0.25s ease-out;
-    }
-
-    .timer-svg {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      pointer-events: none;
-    }
-
-    .timer,
-    .phase-label {
-      position: relative;
-      z-index: 2;
-      transition:
-        color 0.25s ease-out,
-        text-shadow 0.25s ease-out;
-    }
-
-    .timer-circle.over-water .timer,
-    .timer-circle.over-water .phase-label {
-      color: #020617;
-      text-shadow: 0 0 8px rgba(190, 242, 100, 0.8);
-    }
-
-    .timer {
-      font-size: 42px;
-      font-weight: 700;
-      color: #f9fafb;
-    }
-
-    .phase-label {
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: #9ca3af;
-      margin-top: 5px;
-    }
-
-    .controls {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 6px;
-      margin-top: 2px;
-      flex-shrink: 0;
-    }
-
-    button.main-btn {
-      padding: 10px 20px;
-      border-radius: 999px;
-      border: none;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      background: #22c55e;
-      color: #020617;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      box-shadow:
-        0 0 0 1px rgba(34, 197, 94, 0.85),
-        0 8px 24px rgba(34, 197, 94, 0.45);
-    }
-
-    button.secondary-btn {
-      padding: 8px 14px;
-      border-radius: 999px;
-      border: 1px solid #4b5563;
-      font-size: 13px;
-      background: #020617;
-      cursor: pointer;
-      color: #e5e7eb;
-    }
-
-    .achievements {
-      margin-top: 4px;
-      margin-bottom: 4px;
-      text-align: left;
-      flex-shrink: 0;
-    }
-
-    .ach-label {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.13em;
-      color: #6b7280;
-      margin-bottom: 4px;
-    }
-
-    .ach-badges {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
-    }
-
-    .ach-badge {
-      font-size: 11px;
-      padding: 4px 8px;
-      border-radius: 999px;
-      border: 1px dashed #4b5563;
-      color: #9ca3af;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      background: #020617;
-      cursor: pointer;
-    }
-
-    .ach-badge:hover {
-      border-style: solid;
-      border-color: #4b5563;
-    }
-
-    .ach-icon {
-      width: 14px;
-      height: 14px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .ach-icon svg {
-      width: 14px;
-      height: 14px;
-      stroke: #6b7280;
-      fill: none;
-    }
-
-    .ach-badge.earned {
-      border-style: solid;
-      border-color: #22c55e;
-      background: #022c22;
-      color: #e5e7eb;
-      box-shadow: 0 0 14px rgba(34, 197, 94, 0.3);
-    }
-
-    .ach-badge.earned svg { stroke: #bbf7d0; }
-
-    .streak {
-      margin-top: 2px;
-      margin-bottom: 4px;
-      text-align: left;
-      flex-shrink: 0;
-    }
-
-    .streak-label {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.13em;
-      color: #6b7280;
-      margin-bottom: 4px;
-    }
-
-    .streak-main {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-    }
-
-    .streak-icon {
-      width: 26px;
-      height: 26px;
-      border-radius: 999px;
-      background: radial-gradient(circle at 30% 0, #1f2937 0, #020617 70%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow:
-        0 0 0 1px #1f2937,
-        0 0 18px rgba(0,0,0,0.8);
-      transition: transform 0.25s ease-out,
-                  box-shadow 0.25s ease-out,
-                  background 0.25s ease-out;
-    }
-
-    /* ОГОНЁК 🔥 + дыхание */
-    #streakFire {
-      font-size: 22px;
-      transition:
-        font-size 0.25s ease-out,
-        filter 0.25s ease-out;
-      filter: drop-shadow(0 0 4px rgba(249,115,22,0.6));
-      animation: fire-breath 1.8s ease-in-out infinite;
-      transform-origin: center;
-      display: inline-block;
-    }
-
-    @keyframes fire-breath {
-      0%, 100% { transform: translateY(0) scale(1); }
-      50%      { transform: translateY(-1px) scale(1.06); }
-    }
-
-    .streak-icon.low  #streakFire {
-      filter: drop-shadow(0 0 4px rgba(249,115,22,0.7));
-    }
-
-    .streak-icon.mid  #streakFire {
-      filter: drop-shadow(0 0 8px rgba(249,115,22,0.9));
-    }
-
-    .streak-icon.high #streakFire {
-      filter: drop-shadow(0 0 12px rgba(234,179,8,1));
-    }
-
-    .streak-text {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .streak-value { font-size: 13px; color: #e5e7eb; }
-    .streak-status { font-size: 11px; color: #9ca3af; }
-
-    .tips-row {
-      margin-top: 6px;
-      padding-top: 6px;
-      border-top: 1px solid rgba(31, 41, 55, 0.9);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-shrink: 0;
-    }
-
-    .tips-icon {
-      font-size: 18px;
-      flex-shrink: 0;
-    }
-
-    .tips-text {
-      font-size: 14px;
-      color: #e5e7eb;
-      text-align: left;
-      line-height: 1.45;
-      flex: 1;
-    }
-
-    .tips-text strong {
-      color: #a5b4fc;
-      font-weight: 600;
-    }
-
-    .tip-nav {
-      flex-shrink: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .tip-button {
-      width: 24px;
-      height: 24px;
-      border-radius: 999px;
-      border: 1px solid #4b5563;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      background: #020617;
-      color: #e5e7eb;
-      font-size: 14px;
-    }
-
-    .tip-hint {
-      font-size: 9px;
-      color: #6b7280;
-      text-transform: uppercase;
-      letter-spacing: 0.09em;
-    }
-
-    .spacer { flex: 1; }
-
-    /* Модалка смены фазы */
-
-    .phase-modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.9);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 20;
-    }
-
-    .phase-modal.hidden { display: none; }
-
-    .phase-modal-inner {
-      width: 100%;
-      max-width: 360px;
-      background: #020617;
-      border-radius: 22px;
-      padding: 22px 18px 16px;
-      box-shadow:
-        0 28px 70px rgba(0,0,0,0.95),
-        0 0 0 1px rgba(59, 130, 246, 0.7);
-      border: 1px solid rgba(148, 163, 184, 0.5);
-      text-align: left;
-    }
-
-    .phase-modal-title {
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 8px;
-      color: #f9fafb;
-    }
-
-    .phase-modal-text {
-      font-size: 14px;
-      color: #d1d5db;
-      margin-bottom: 12px;
-      line-height: 1.5;
-    }
-
-    .phase-modal-note {
-      font-size: 12px;
-      color: #9ca3af;
-      margin-bottom: 14px;
-    }
-
-    .phase-modal-btn {
-      width: 100%;
-      padding: 10px 14px;
-      border-radius: 999px;
-      border: none;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      background: #22c55e;
-      color: #020617;
-      box-shadow:
-        0 0 0 1px rgba(34, 197, 94, 0.8),
-        0 10px 26px rgba(34, 197, 94, 0.5);
-    }
-
-    /* Модалка инфы (достижения / фишка / серия дней) */
-
-    .info-modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.9);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 25;
-    }
-
-    .info-modal.hidden { display: none; }
-
-    .info-modal-inner {
-      width: 100%;
-      max-width: 360px;
-      background: #020617;
-      border-radius: 22px;
-      padding: 20px 18px 14px;
-      box-shadow:
-        0 28px 70px rgba(0,0,0,0.95),
-        0 0 0 1px rgba(59, 130, 246, 0.7);
-      border: 1px solid rgba(148, 163, 184, 0.5);
-      text-align: left;
-    }
-
-    .info-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .info-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 999px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: radial-gradient(circle at 30% 0, #1f2937 0, #020617 80%);
-      box-shadow:
-        0 0 0 1px #1f2937,
-        0 0 18px rgba(0,0,0,0.8);
-    }
-
-    .info-icon svg {
-      width: 26px;
-      height: 26px;
-      stroke-width: 1.6;
-      fill: none;
-      stroke: #e5e7eb;
-    }
-
-    .info-icon.earned {
-      background: radial-gradient(circle at 30% 0, #22c55e 0, #16a34a 60%);
-      box-shadow:
-        0 0 24px rgba(34,197,94,0.8),
-        0 0 0 1px rgba(21,128,61,0.9);
-      animation: info-pulse 1.4s ease-in-out infinite;
-    }
-
-    .info-icon.earned svg {
-      stroke: #022c22;
-    }
-
-    .info-icon.locked {
-      opacity: 0.55;
-      filter: grayscale(1);
-    }
-
-    @keyframes info-pulse {
-      0%, 100% { transform: scale(1); }
-      50%      { transform: scale(1.06); }
-    }
-
-    .info-title {
-      font-size: 16px;
-      font-weight: 600;
-      color: #f9fafb;
-      margin-bottom: 2px;
-    }
-
-    .info-status {
-      font-size: 12px;
-      color: #9ca3af;
-    }
-
-    .info-status-earned {
-      color: #bbf7d0;
-    }
-
-    .info-body {
-      font-size: 14px;
-      color: #d1d5db;
-      line-height: 1.5;
-      margin-bottom: 12px;
-    }
-
-    .info-footer {
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .info-close {
-      padding: 8px 16px;
-      border-radius: 999px;
-      border: none;
-      cursor: pointer;
-      font-size: 13px;
-      font-weight: 600;
-      background: #111827;
-      color: #e5e7eb;
-      box-shadow: 0 0 0 1px #4b5563;
-    }
-
-    /* Модалка выбора пола */
-
-    .gender-modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.96);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 30;
-    }
-
-    .gender-modal.hidden { display: none; }
-
-    .gender-inner {
-      width: 100%;
-      max-width: 360px;
-      background: #020617;
-      border-radius: 22px;
-      padding: 22px 18px 18px;
-      box-shadow:
-        0 28px 70px rgba(0,0,0,0.95),
-        0 0 0 1px rgba(59, 130, 246, 0.7);
-      border: 1px solid rgba(148, 163, 184, 0.5);
-      text-align: left;
-    }
-
-    .gender-title {
-      font-size: 17px;
-      font-weight: 600;
-      color: #f9fafb;
-      margin-bottom: 6px;
-    }
-
-    .gender-sub {
-      font-size: 13px;
-      color: #9ca3af;
-      margin-bottom: 14px;
-    }
-
-    .gender-options {
-      display: flex;
-      gap: 10px;
-      justify-content: space-between;
-    }
-
-    .gender-btn {
-      flex: 1;
-      border-radius: 18px;
-      padding: 10px 8px;
-      border: 1px solid #1f2937;
-      background: radial-gradient(circle at 30% 0, #111827 0, #020617 70%);
-      color: #e5e7eb;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      box-shadow: 0 0 0 1px #0f172a;
-    }
-
-    .gender-btn:hover {
-      box-shadow:
-        0 0 0 1px #22c55e,
-        0 0 18px rgba(34,197,94,0.4);
-    }
-
-    .gender-emoji {
-      font-size: 30px;
-      animation: gender-bounce 1.4s ease-in-out infinite;
-    }
-
-    .gender-label {
-      font-size: 13px;
-      font-weight: 500;
-    }
-
-    @keyframes gender-bounce {
-      0%, 100% { transform: translateY(0); }
-      50%      { transform: translateY(-3px) scale(1.05); }
-    }
-
-    /* Настройки */
-
-    .settings-inner .info-title {
-      font-size: 18px;
-      margin-bottom: 10px;
-    }
-
-    .settings-section {
-      margin-bottom: 12px;
-    }
-
-    .settings-section-title {
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: #6b7280;
-      margin-bottom: 6px;
-    }
-
-    .settings-row {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
-    .settings-pill {
-      padding: 6px 12px;
-      border-radius: 999px;
-      border: 1px solid #4b5563;
-      background: #020617;
-      color: #e5e7eb;
-      font-size: 13px;
-      cursor: pointer;
-    }
-
-    .settings-pill-active {
-      border-color: #22c55e;
-      background: #022c22;
-      box-shadow: 0 0 0 1px rgba(34,197,94,0.7);
-    }
-
-    .settings-footer {
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-      margin-top: 8px;
-      flex-wrap: wrap;
-    }
-
-    .settings-help-btn {
-      padding: 8px 14px;
-      border-radius: 999px;
-      border: 1px solid #4b5563;
-      background: #020617;
-      color: #e5e7eb;
-      font-size: 13px;
-      cursor: pointer;
-    }
-
-    /* Онбординг (тур) */
-
-    .tour-inner .info-title {
-      font-size: 17px;
-      margin-bottom: 6px;
-    }
-
-    .tour-step-count {
-      font-size: 11px;
-      color: #6b7280;
-      margin-bottom: 6px;
-    }
-
-    .tour-buttons {
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 8px;
-    }
-
-    .tour-skip {
-      padding: 7px 12px;
-      border-radius: 999px;
-      border: 1px solid #4b5563;
-      background: #020617;
-      color: #e5e7eb;
-      font-size: 13px;
-      cursor: pointer;
-    }
-
-    .tour-next {
-      padding: 8px 16px;
-      border-radius: 999px;
-      border: none;
-      background: #22c55e;
-      color: #020617;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow:
-        0 0 0 1px rgba(34,197,94,0.8),
-        0 8px 22px rgba(34,197,94,0.45);
-    }
-
-    @media (max-width: 420px) {
-      .card {
-        border-radius: 16px;
-        padding: 14px 12px 10px;
-      }
-      .timer-circle {
-        width: 180px;
-        height: 180px;
-      }
-      .timer { font-size: 36px; }
-      .subtitle { max-width: 220px; }
-      .logo-brand { font-size: 12px; }
-      .logo-sub { font-size: 8px; }
-      .phase-modal-inner,
-      .info-modal-inner,
-      .gender-inner {
-        max-width: 320px;
-        padding: 18px 14px 12px;
-      }
-    }
-
-    /* Горизонтальная ориентация */
-
-    @media (orientation: landscape) {
-      .shell {
-        max-width: 900px;
-        padding: 8px 10px;
-      }
-      .card {
-        height: auto;
-        max-height: none;
-        padding: 12px 18px 10px;
-      }
-      .header { margin-bottom: 4px; }
-      h1 { font-size: 18px; }
-      .subtitle { font-size: 12px; max-width: 280px; }
-
-      .feature { margin-bottom: 4px; }
-      .feature-pill { font-size: 10px; padding: 4px 9px; }
-
-      .modes { margin-bottom: 4px; }
-
-      .timer-circle {
-        width: 160px;
-        height: 160px;
-      }
-      .timer { font-size: 32px; }
-      .phase-label { font-size: 11px; }
-
-      .ach-label,
-      .streak-label {
-        font-size: 10px;
-      }
-
-      .tips-text {
-        font-size: 13px;
-      }
-    }
-
-    @media (orientation: landscape) and (max-height: 480px) {
-      .card {
-        transform: scale(0.9);
-        transform-origin: top center;
-      }
-    }
-
-    /* СВЕТЛАЯ ТЕМА */
-
-    body.light-theme {
-      background: radial-gradient(circle at top, #e5e7eb 0, #f3f4f6 45%, #e5e7eb 100%);
-      color: #020617;
-    }
-
-    body.light-theme .card {
-      background: #f9fafb;
-      box-shadow:
-        0 18px 40px rgba(148,163,184,0.65),
-        0 0 0 1px rgba(148, 163, 184, 0.6);
-      border-color: rgba(148, 163, 184, 0.6);
-    }
-
-    body.light-theme h1 {
-      color: #020617;
-    }
-
-    body.light-theme .subtitle {
-      color: #4b5563;
-    }
-
-    body.light-theme .badge {
-      background: rgba(59,130,246,0.08);
-      color: #1d4ed8;
-    }
-
-    body.light-theme .feature-pill {
-      background: radial-gradient(circle at 0 0, rgba(59,130,246,0.15), transparent 55%);
-      box-shadow:
-        0 0 10px rgba(191,219,254,0.7),
-        0 0 0 1px rgba(191,219,254,0.9);
-    }
-
-    /* Фишка METTA — более тёмный текст в светлой теме */
-    body.light-theme .feature-title {
-      color: #111827;
-    }
-
-    body.light-theme .feature-text {
-      color: #111827;
-    }
-
-    body.light-theme .logo-mark {
-      background: radial-gradient(circle at 30% 20%, #e5e7eb 0, #cbd5f5 70%);
-      color: #020617;
-      box-shadow:
-        0 4px 10px rgba(148,163,184,0.8),
-        0 0 0 1px rgba(148,163,184,0.9);
-    }
-
-    body.light-theme .logo-brand {
-      color: #020617;
-    }
-
-    body.light-theme .logo-sub {
-      color: #6b7280;
-    }
-
-    body.light-theme .settings-btn {
-      background: #f9fafb;
-      color: #111827;
-      border-color: rgba(148,163,184,0.9);
-      box-shadow: 0 0 0 1px rgba(209,213,219,0.9);
-    }
-
-    body.light-theme .settings-btn:hover {
-      box-shadow:
-        0 0 0 1px rgba(59,130,246,0.9),
-        0 0 10px rgba(59,130,246,0.4);
-    }
-
-    body.light-theme .mode-btn {
-      background: #f9fafb;
-      color: #111827;
-      border-color: rgba(209,213,219,0.9);
-      box-shadow: 0 0 0 1px rgba(209,213,219,0.9);
-    }
-
-    body.light-theme .mode-btn.active {
-      background: #3b82f6;
-      color: #eff6ff;
-      border-color: #2563eb;
-      box-shadow:
-        0 0 0 1px rgba(59,130,246,0.9),
-        0 0 18px rgba(59,130,246,0.6);
-    }
-
-    body.light-theme .custom-inputs input,
-    body.light-theme .custom-inputs button {
-      background: #f9fafb;
-      color: #111827;
-      border-color: #d1d5db;
-    }
-
-    body.light-theme .status-label {
-      color: #047857;
-    }
-
-    body.light-theme .cycles {
-      color: #4b5563;
-    }
-
-    /* голубой таймер-круг в светлой теме */
-    body.light-theme .timer-circle {
-      background: radial-gradient(circle at 30% 0, #dbeafe 0, #bfdbfe 45%, #93c5fd 100%);
-      box-shadow:
-        inset 0 0 0 1px rgba(147,197,253,0.9),
-        0 10px 26px rgba(147,197,253,0.8);
-    }
-
-    body.light-theme .timer {
-      color: #020617;
-    }
-
-    body.light-theme .phase-label {
-      color: #4b5563;
-    }
-
-    /* Текст поверх тёмной "воды" в светлой теме — делаем светлым */
-    body.light-theme .timer-circle.over-water .timer,
-    body.light-theme .timer-circle.over-water .phase-label {
-      color: #f9fafb;
-      text-shadow: 0 0 10px rgba(15,23,42,0.9);
-    }
-
-    /* голубой вариант всех кнопок в светлой теме */
-
-    body.light-theme button.main-btn {
-      background: #3b82f6;
-      color: #f9fafb;
-      box-shadow:
-        0 0 0 1px rgba(37,99,235,0.9),
-        0 8px 24px rgba(59,130,246,0.55);
-    }
-
-    body.light-theme button.secondary-btn {
-      background: #eff6ff;
-      color: #1f2937;
-      border-color: #bfdbfe;
-    }
-
-    body.light-theme .ach-label,
-    body.light-theme .streak-label {
-      color: #9ca3af;
-    }
-
-    body.light-theme .ach-badge {
-      background: #f9fafb;
-      color: #4b5563;
-      border-color: #d1d5db;
-    }
-
-    body.light-theme .ach-badge.earned {
-      background: #dcfce7;
-      color: #065f46;
-      border-color: #16a34a;
-      box-shadow: 0 0 10px rgba(74,222,128,0.6);
-    }
-
-    body.light-theme .streak-icon {
-      background: radial-gradient(circle at 30% 0, #f97316 0, #facc15 60%);
-      box-shadow:
-        0 0 0 1px #fb923c,
-        0 0 18px rgba(251,191,36,0.9);
-    }
-
-    body.light-theme .streak-value {
-      color: #111827;
-    }
-
-    body.light-theme .streak-status {
-      color: #4b5563;
-    }
-
-    body.light-theme .tips-row {
-      border-top-color: #e5e7eb;
-    }
-
-    body.light-theme .tips-text {
-      color: #111827;
-    }
-
-    body.light-theme .tips-text strong {
-      color: #4338ca;
-    }
-
-    body.light-theme .tip-button {
-      background: #f9fafb;
-      color: #111827;
-      border-color: #d1d5db;
-    }
-
-    body.light-theme .phase-modal-inner,
-    body.light-theme .info-modal-inner,
-    body.light-theme .gender-inner {
-      background: #f9fafb;
-      border-color: #e5e7eb;
-      box-shadow:
-        0 18px 40px rgba(148,163,184,0.9),
-        0 0 0 1px rgba(191,219,254,0.9);
-    }
-
-    body.light-theme .phase-modal-title,
-    body.light-theme .info-title,
-    body.light-theme .gender-title {
-      color: #020617;
-    }
-
-    body.light-theme .phase-modal-text,
-    body.light-theme .info-body,
-    body.light-theme .gender-sub {
-      color: #4b5563;
-    }
-
-    body.light-theme .info-close,
-    body.light-theme .tour-skip,
-    body.light-theme .settings-help-btn {
-      background: #f9fafb;
-      color: #111827;
-      box-shadow: 0 0 0 1px #d1d5db;
-    }
-
-    body.light-theme .settings-pill {
-      background: #f9fafb;
-      color: #111827;
-      border-color: #d1d5db;
-    }
-
-    body.light-theme .settings-pill-active {
-      background: #dbeafe;
-      color: #1d4ed8;
-      border-color: #2563eb;
-    }
-
-    body.light-theme .gender-btn {
-      background: radial-gradient(circle at 30% 0, #e5e7eb 0, #d1d5db 70%);
-      color: #111827;
-      border-color: #cbd5e1;
-      box-shadow: 0 0 0 1px #e5e7eb;
-    }
-
-    body.light-theme .info-icon {
-      background: radial-gradient(circle at 30% 0, #e5e7eb 0, #d1d5db 80%);
-      box-shadow: 0 0 0 1px #d1d5db;
-    }
-
-    body.light-theme .info-icon svg {
-      stroke: #111827;
-    }
-
-    body.light-theme .phase-modal {
-      background: rgba(15,23,42,0.3);
-    }
-
-    body.light-theme .info-modal,
-    body.light-theme .gender-modal {
-      background: rgba(148,163,184,0.35);
-    }
-  </style>
-</head>
-<body>
-  <div class="shell">
-    <div class="card">
-      <div class="header">
-        <div>
-          <div class="badge">
-            <span class="badge-dot"></span>
-            METTA • Focus
-          </div>
-          <h1>Pomodoro для спины</h1>
-          <div class="subtitle">
-            Работай по таймеру, делай паузы и не давай спине сдаваться.
-          </div>
-          <div id="featurePill" class="feature">
-            <div class="feature-pill">
-              <div class="feature-icon">
-                <div class="feature-spine">
-                  <span></span><span></span><span></span>
-                </div>
-              </div>
-              <div class="feature-text-wrap">
-                <div class="feature-title">Фишка METTA</div>
-                <div class="feature-text">Гибкий «позвоночник» спинки — меньше нагрузки на поясницу.</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="logo">
-          <div class="logo-mark">M</div>
-          <div class="logo-text">
-            <div class="logo-brand">METTA</div>
-            <div class="logo-sub">ERGONOMIC CHAIRS</div>
-          </div>
-          <button id="settingsBtn" class="settings-btn" aria-label="Настройки">⚙️</button>
-        </div>
-      </div>
-
-      <div class="modes">
-        <button class="mode-btn active" data-work="25" data-break="5">
-          <span class="mode-dot"></span><span>25 / 5</span>
-        </button>
-        <button class="mode-btn" data-work="50" data-break="10">
-          <span class="mode-dot"></span><span>50 / 10</span>
-        </button>
-        <button class="mode-btn" id="customModeBtn">
-          <span class="mode-dot"></span><span>Свой режим</span>
-        </button>
-      </div>
-
-      <div class="custom-inputs" id="customInputs">
-        <input type="number" id="customWork" placeholder="Работа, мин" min="1" max="180">
-        <input type="number" id="customBreak" placeholder="Перерыв, мин" min="1" max="60">
-        <button class="secondary-btn" id="applyCustom">OK</button>
-      </div>
-
-      <div class="status-row">
-        <div id="status" class="status focus">
-          <span class="status-pill"></span>
-          <span class="status-label">Режим фокуса</span>
-        </div>
-        <div id="cycles" class="cycles">Завершено циклов: 0</div>
-      </div>
-
-      <div class="timer-wrap">
-        <div class="timer-circle">
-          <svg class="timer-svg" viewBox="0 0 200 200" aria-hidden="true">
-            <defs>
-              <!-- две заливки: тёмная (зелёная) и светлая (голубая) -->
-              <linearGradient id="waterGradientDark" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#22c55e"/>
-                <stop offset="100%" stop-color="#16a34a"/>
-              </linearGradient>
-              <!-- СТАЛО: более тёмная вода в светлой теме -->
-              <linearGradient id="waterGradientLight" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#3b82f6"/>
-                <stop offset="100%" stop-color="#1d4ed8"/>
-              </linearGradient>
-              <clipPath id="waterClip">
-                <circle cx="100" cy="100" r="100"></circle>
-              </clipPath>
-            </defs>
-            <g clip-path="url(#waterClip)">
-              <rect id="waterRect" x="0" y="200" width="200" height="0" fill="url(#waterGradientDark)"></rect>
-            </g>
-          </svg>
-          <div id="timer" class="timer">25:00</div>
-          <div id="phaseLabel" class="phase-label">Фокус-сессия</div>
-        </div>
-      </div>
-
-      <div class="controls">
-        <button id="startPauseBtn" class="main-btn">
-          <span>▶</span><span>Старт</span>
-        </button>
-        <button id="resetBtn" class="secondary-btn">Сброс</button>
-      </div>
-
-      <div class="achievements">
-        <div class="ach-label">Достижения сегодня</div>
-        <div class="ach-badges">
-          <div class="ach-badge" data-threshold="1"
-               data-title="Новичок фокуса"
-               data-desc="Ты успешно завершил(а) первый фокус-цикл за сегодня. Отличное начало привычки.">
-            <div class="ach-icon">
-              <svg viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="7.5"/>
-                <circle cx="12" cy="12" r="4"/>
-                <circle cx="12" cy="12" r="1.2"/>
-              </svg>
-            </div>
-            <span>Новичок фокуса</span>
-          </div>
-          <div class="ach-badge" data-threshold="3"
-               data-title="Друг спины"
-               data-desc="3 фокус-цикла за день — это уже забота о спине, а не случайность.">
-            <div class="ach-icon">
-              <svg viewBox="0 0 24 24">
-                <path d="M12 3.5L6.5 5.5V11.5C6.5 14.8 8.7 17.7 12 18.8C15.3 17.7 17.5 14.8 17.5 11.5V5.5L12 3.5Z"/>
-              </svg>
-            </div>
-            <span>Друг спины</span>
-          </div>
-          <div class="ach-badge" data-threshold="5"
-               data-title="Герой дедлайна"
-               data-desc="5 фокус-циклов — ты умеешь работать глубоко и не забывать о паузах.">
-            <div class="ach-icon">
-              <svg viewBox="0 0 24 24">
-                <path d="M12 3L8 13H12L11 21L16 11H12L12 3Z"/>
-              </svg>
-            </div>
-            <span>Герой дедлайна</span>
-          </div>
-          <div class="ach-badge" data-threshold="8"
-               data-title="Легенда METTA"
-               data-desc="8 и более циклов за день — уровень легенды. Главное — не забывай отдыхать.">
-            <div class="ach-icon">
-              <svg viewBox="0 0 24 24">
-                <path d="M9 4H15V8C15 9.7 13.7 11 12 11C10.3 11 9 9.7 9 8V4Z"/>
-                <path d="M9 4H6.5C6.2 4 6 4.2 6 4.5C6 7 7.5 9 9.5 9"/>
-                <path d="M15 4H17.5C17.8 4 18 4.2 18 4.5C18 7 16.5 9 14.5 9"/>
-                <path d="M10 14H14"/>
-                <path d="M11 14V16.5L10 18V19H14V18L13 16.5V14"/>
-              </svg>
-            </div>
-            <span>Легенда METTA</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="streak">
-        <div class="streak-label">Серия дней</div>
-        <div class="streak-main" id="streakMain">
-          <div class="streak-icon" id="streakIcon">
-            <span id="streakFire">🔥</span>
-          </div>
-          <div class="streak-text">
-            <div id="streakValue" class="streak-value">0 дней подряд</div>
-            <div id="streakStatus" class="streak-status">Начни серию сегодня</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="spacer"></div>
-
-      <div class="tips-row" id="tipRow">
-        <div class="tips-icon">💺</div>
-        <div class="tips-text">
-          <strong>Совет:</strong> настрой кресло так, чтобы колени были под углом ~90°, а спина плотно прилегала к спинке.
-        </div>
-        <div class="tip-nav">
-          <button class="tip-button" id="nextTipBtn">›</button>
-          <div class="tip-hint">Сменить</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Модалка смены фазы -->
-  <div id="phaseModal" class="phase-modal hidden">
-    <div class="phase-modal-inner">
-      <div id="phaseModalTitle" class="phase-modal-title">Фокус-сессия окончена</div>
-      <div id="phaseModalText" class="phase-modal-text">
-        Отличная работа — это ещё один шаг к спокойной спине и голове.
-      </div>
-      <div id="phaseModalNote" class="phase-modal-note">
-        Нажми, когда захочешь перейти к следующей фазе.
-      </div>
-      <button id="phaseModalBtn" class="phase-modal-btn">Перейти к следующей фазе</button>
-    </div>
-  </div>
-
-  <!-- Модалка для достижений / фишки METTA / серии дней -->
-  <div id="infoModal" class="info-modal hidden">
-    <div class="info-modal-inner">
-      <div class="info-header">
-        <div id="infoIcon" class="info-icon"></div>
-        <div>
-          <div id="infoTitle" class="info-title">Заголовок</div>
-          <div id="infoStatus" class="info-status">Статус</div>
-        </div>
-      </div>
-      <div id="infoBody" class="info-body">Описание.</div>
-      <div class="info-footer">
-        <button id="infoCloseBtn" class="info-close">Понятно</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Модалка выбора пола -->
-  <div id="genderModal" class="gender-modal hidden">
-    <div class="gender-inner">
-      <div class="gender-title">Как к тебе обращаться?</div>
-      <div class="gender-sub">
-        Выбери вариант, чтобы подсказки и поздравления звучали более лично. Настройки можно будет сменить позже, очистив данные браузера или через меню настроек.
-      </div>
-      <div class="gender-options">
-        <button id="genderMale" class="gender-btn">
-          <span class="gender-emoji">👨‍💻</span>
-          <span class="gender-label">Я мужчина</span>
-        </button>
-        <button id="genderFemale" class="gender-btn">
-          <span class="gender-emoji">👩‍💻</span>
-          <span class="gender-label">Я женщина</span>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Модалка настроек -->
-  <div id="settingsModal" class="info-modal hidden">
-    <div class="info-modal-inner settings-inner">
-      <div class="info-title">Настройки</div>
-
-      <div class="settings-section">
-        <div class="settings-section-title">Тема</div>
-        <div class="settings-row">
-          <button id="themeDarkBtn" class="settings-pill">Тёмная</button>
-          <button id="themeLightBtn" class="settings-pill">Светлая</button>
-        </div>
-      </div>
-
-      <div class="settings-section">
-        <div class="settings-section-title">Обращение</div>
-        <div class="settings-row">
-          <button id="settingsGenderMale" class="settings-pill">👨 Мужчина</button>
-          <button id="settingsGenderFemale" class="settings-pill">👩 Женщина</button>
-        </div>
-      </div>
-
-      <div class="settings-footer">
-        <button id="settingsTourBtn" class="settings-help-btn">Как пользоваться</button>
-        <button id="settingsCloseBtn" class="info-close">Закрыть</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Онбординг / мини-инструкция -->
-  <div id="tourModal" class="info-modal hidden">
-    <div class="info-modal-inner tour-inner">
-      <div class="tour-step-count" id="tourStepCount">Шаг 1 из 4</div>
-      <div class="info-title" id="tourTitle">Добро пожаловать 👋</div>
-      <div class="info-body" id="tourBody">
-        Здесь будет краткий обзор интерфейса.
-      </div>
-      <div class="tour-buttons">
-        <button id="tourSkipBtn" class="tour-skip">Пропустить</button>
-        <button id="tourNextBtn" class="tour-next">Дальше</button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    function getLocalDateKey(d = new Date()) {
-      const y = d.getFullYear();
-      const m = String(d.getMonth() + 1).padStart(2, "0");
-      const day = String(d.getDate()).padStart(2, "0");
-      return `${y}-${m}-${day}`;
-    }
-
-    const GENDER_KEY = "metta_user_gender";
-    const THEME_KEY = "metta_theme";
-    const ONBOARDING_KEY = "metta_tour_seen";
-
-    let userGender = null;
-    let currentStreak = 0;
-    let currentTheme = "dark";
-
-    function loadGenderFromStorage() {
-      try {
-        const g = localStorage.getItem(GENDER_KEY);
-        if (g === "male" || g === "female") {
-          userGender = g;
-        }
-      } catch (e) {}
-    }
-
-    function g(maleStr, femaleStr) {
-      return userGender === "female" ? femaleStr : maleStr;
-    }
-
-    function loadThemeFromStorage() {
-      try {
-        const t = localStorage.getItem(THEME_KEY);
-        if (t === "dark" || t === "light") {
-          currentTheme = t;
-        } else {
-          currentTheme = "dark";
-        }
-      } catch (e) {
-        currentTheme = "dark";
-      }
-      applyTheme(currentTheme, false);
-    }
-
-    function applyTheme(theme, save = true) {
-      currentTheme = theme === "light" ? "light" : "dark";
-      if (currentTheme === "light") {
-        document.body.classList.add("light-theme");
-      } else {
-        document.body.classList.remove("light-theme");
-      }
-      if (save) {
-        try {
-          localStorage.setItem(THEME_KEY, currentTheme);
-        } catch (e) {}
-      }
-      updateSettingsThemeButtons();
-      updateWaterGradientForTheme();
-    }
-
-    let workMinutes = 25;
-    let breakMinutes = 5;
-    let remainingSeconds = workMinutes * 60;
-    let totalSecondsCurrentPhase = remainingSeconds;
-    let isFocus = true;
-    let isRunning = false;
-       let timerInterval = null;
-    let cycles = 0;
-    let pendingPhase = null;
-
-    let isCustomModeActive = false;
-
-    const STREAK_DATE_KEY = "metta_streak_date";
-    const STREAK_VALUE_KEY = "metta_streak_value";
-    const STREAK_LAST_UPDATED_KEY = "metta_streak_updated";
-    const STREAK_MILESTONE_SHOWN_KEY = "metta_streak_milestone_shown";
-
-    const CYCLES_DATE_KEY = "metta_cycles_date";
-    const CYCLES_VALUE_KEY = "metta_cycles_value";
-
-    const timerEl = document.getElementById('timer');
-    const phaseLabelEl = document.getElementById('phaseLabel');
-    const statusEl = document.getElementById('status');
-    const cyclesEl = document.getElementById('cycles');
-    const startPauseBtn = document.getElementById('startPauseBtn');
-    const resetBtn = document.getElementById('resetBtn');
-    const tipTextEl = document.querySelector('.tips-text');
-    const modeButtons = document.querySelectorAll('.mode-btn');
-    const customModeBtn = document.getElementById('customModeBtn');
-    const customInputs = document.getElementById('customInputs');
-    const customWorkInput = document.getElementById('customWork');
-    const customBreakInput = document.getElementById('customBreak');
-    const applyCustomBtn = document.getElementById('applyCustom');
-    const achBadges = document.querySelectorAll('.ach-badge');
-    const nextTipBtn = document.getElementById('nextTipBtn');
-
-    const streakIconEl = document.getElementById('streakIcon');
-    const streakValueEl = document.getElementById('streakValue');
-    const streakStatusEl = document.getElementById('streakStatus');
-    const streakMain = document.getElementById('streakMain');
-
-    const phaseModal = document.getElementById('phaseModal');
-    const phaseModalTitle = document.getElementById('phaseModalTitle');
-    const phaseModalText = document.getElementById('phaseModalText');
-    const phaseModalNote = document.getElementById('phaseModalNote');
-    const phaseModalBtn = document.getElementById('phaseModalBtn');
-
-    const featurePill = document.getElementById('featurePill');
-
-    const waterRect = document.getElementById('waterRect');
-    const timerCircle = document.querySelector('.timer-circle');
-
-    const infoModal = document.getElementById('infoModal');
-    const infoIcon = document.getElementById('infoIcon');
-    const infoTitle = document.getElementById('infoTitle');
-    const infoStatus = document.getElementById('infoStatus');
-    const infoBody = document.getElementById('infoBody');
-    const infoCloseBtn = document.getElementById('infoCloseBtn');
-
-    const genderModal = document.getElementById('genderModal');
-    const genderMaleBtn = document.getElementById('genderMale');
-    const genderFemaleBtn = document.getElementById('genderFemale');
-
-    const settingsBtn = document.getElementById('settingsBtn');
-    const settingsModal = document.getElementById('settingsModal');
-    const themeDarkBtn = document.getElementById('themeDarkBtn');
-    const themeLightBtn = document.getElementById('themeLightBtn');
-    const settingsGenderMale = document.getElementById('settingsGenderMale');
-    const settingsGenderFemale = document.getElementById('settingsGenderFemale');
-    const settingsCloseBtn = document.getElementById('settingsCloseBtn');
-    const settingsTourBtn = document.getElementById('settingsTourBtn');
-
-    const tourModal = document.getElementById('tourModal');
-    const tourStepCountEl = document.getElementById('tourStepCount');
-    const tourTitleEl = document.getElementById('tourTitle');
-    const tourBodyEl = document.getElementById('tourBody');
-    const tourSkipBtn = document.getElementById('tourSkipBtn');
-    const tourNextBtn = document.getElementById('tourNextBtn');
-
-    let audioCtx = null;
-
-    function ensureAudioCtx() {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      if (audioCtx.state === "suspended") {
-        audioCtx.resume();
-      }
-    }
-
-    function vibrate(pattern = 20) {
-      try {
-        if (navigator.vibrate) {
-          navigator.vibrate(pattern);
-        }
-      } catch (e) {}
-    }
-
-    function playTapSound() {
-      try {
-        ensureAudioCtx();
-        const now = audioCtx.currentTime;
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(520, now);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        gain.gain.setValueAtTime(0.0001, now);
-        gain.gain.exponentialRampToValueAtTime(0.14, now + 0.01);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.15);
-        osc.start(now);
-        osc.stop(now + 0.18);
-      } catch (e) {}
-    }
-
-    function tactileTap() {
-      playTapSound();
-      vibrate(25);
-    }
-
-    function playNotificationSound() {
-      try {
-        ensureAudioCtx();
-
-        function beep(atTime, freq) {
-          const o = audioCtx.createOscillator();
-          const gGain = audioCtx.createGain();
-          o.type = "sine";
-          o.frequency.setValueAtTime(freq, atTime);
-          o.connect(gGain);
-          gGain.connect(audioCtx.destination);
-          gGain.gain.setValueAtTime(0.0001, atTime);
-          gGain.gain.exponentialRampToValueAtTime(0.18, atTime + 0.01);
-          gGain.gain.exponentialRampToValueAtTime(0.0001, atTime + 0.35);
-          o.start(atTime);
-          o.stop(atTime + 0.4);
-        }
-
-        const now = audioCtx.currentTime;
-        beep(now, 880);
-        beep(now + 0.5, 880);
-        beep(now + 1.0, 880);
-        vibrate([40, 30, 40]);
-      } catch (e) {}
-    }
-
-    function isPortrait() {
-      return window.matchMedia &&
-             window.matchMedia("(orientation: portrait)").matches;
-    }
-
-    // советы: длинные и компактные (для "Свой режим" в портрете)
-    const focusTipsFull = [
-      "Следи, чтобы поясница опиралась на спинку — не тянись корпусом к экрану.",
-      "Отрегулируй высоту кресла так, чтобы стопы стояли полностью на полу.",
-      "Экран должен быть на уровне глаз — шея скажет спасибо.",
-      "Прижми лопатки к спинке кресла и отпусти плечи вниз.",
-      "Если работаешь за ноутбуком — подними его на подставку, а не шею."
-    ];
-
-    const breakTipsFull = [
-      "Встань, пройди несколько шагов и сделай 3–5 кругов плечами вперёд-назад.",
-      "Медленно наклони голову вправо-влево, без резких движений.",
-      "Подними руки вверх, потянись и сделай глубокий вдох-выдох.",
-      "Сделай пару шагов, посмотри вдаль в окно — дай глазам перерыв.",
-      "Потряси кистями, разомни пальцы — они тоже работают весь день."
-    ];
-
-    const focusTipsShort = [
-      "Плотно прижми поясницу к спинке.",
-      "Колени под углом ~90°, стопы на полу.",
-      "Экран держи на уровне глаз.",
-      "Опусти плечи вниз, расслабь шею.",
-      "Ноутбук подними, а не шею."
-    ];
-
-    const breakTipsShort = [
-      "Пройди пару шагов и разомни плечи.",
-      "Медленно наклони голову вправо-влево.",
-      "Потянись вверх и глубоко вдохни.",
-      "Сделай несколько шагов и глянь вдаль.",
-      "Потряси кистями и разомни пальцы."
-    ];
-
-    function getActiveFocusTips() {
-      return isCustomModeActive && isPortrait() ? focusTipsShort : focusTipsFull;
-    }
-
-    function getActiveBreakTips() {
-      return isCustomModeActive && isPortrait() ? breakTipsShort : breakTipsFull;
-    }
-
-    let focusTipIndex = 0;
-    let breakTipIndex = 0;
-
-    function getCurrentTip() {
-      if (isFocus) {
-        const list = getActiveFocusTips();
-        const idx = focusTipIndex % list.length;
-        return list[idx];
-      } else {
-        const list = getActiveBreakTips();
-        const idx = breakTipIndex % list.length;
-        return list[idx];
-      }
-    }
-
-    function updateTipText() {
-      const text = getCurrentTip();
-      tipTextEl.innerHTML = isFocus
-        ? `<strong>Совет:</strong> ${text}`
-        : `<strong>Перерыв:</strong> ${text}`;
-    }
-
-    function nextTip() {
-      if (isFocus) {
-        const list = getActiveFocusTips();
-        focusTipIndex = (focusTipIndex + 1) % list.length;
-      } else {
-        const list = getActiveBreakTips();
-        breakTipIndex = (breakTipIndex + 1) % list.length;
-      }
-      updateTipText();
-    }
-
-    function resetTipIndexForPhase() {
-      if (isFocus) {
-        focusTipIndex = 0;
-      } else {
-        breakTipIndex = 0;
-      }
-      updateTipText();
-    }
-
-    window.addEventListener("resize", () => {
-      updateTipText();
+<script>
+  // ... ВЕСЬ твой код выше без изменений ...
+
+  let tourIndex = 0;
+
+  function markTourSeen() {
+    try { localStorage.setItem(ONBOARDING_KEY, "1"); } catch (e) {}
+  }
+
+  function isTourSeen() {
+    try { return localStorage.getItem(ONBOARDING_KEY) === "1"; } catch (e) { return false; }
+  }
+
+  function renderTourStep() {
+    const step = tourSteps[tourIndex] || tourSteps[0];
+    tourStepCountEl.textContent = `Шаг ${tourIndex + 1} из ${tourSteps.length}`;
+    tourTitleEl.textContent = step.title;
+    tourBodyEl.textContent = step.body;
+    tourNextBtn.textContent = (tourIndex === tourSteps.length - 1) ? "Готово" : "Дальше";
+  }
+
+  function openTour() {
+    if (!tourModal) return;
+    tourIndex = 0;
+    renderTourStep();
+    tourModal.classList.remove("hidden");
+  }
+
+  function closeTour() {
+    if (!tourModal) return;
+    tourModal.classList.add("hidden");
+    markTourSeen();
+  }
+
+  function nextTour() {
+    if (tourIndex >= tourSteps.length - 1) {
+      closeTour();
+      return;
+    }
+    tourIndex++;
+    renderTourStep();
+  }
+
+  function maybeStartTourAuto() {
+    // запускаем тур только если:
+    // 1) пол уже выбран (чтобы не мешать модалке пола)
+    // 2) тур ещё не был показан
+    // 3) модалка пола закрыта
+    if (userGender && !isTourSeen() && genderModal.classList.contains("hidden")) {
+      openTour();
+    }
+  }
+
+  // --- Режимы (25/5, 50/10, свой режим) ---
+  function setMode(work, brk, custom = false) {
+    workMinutes = work;
+    breakMinutes = brk;
+    isCustomModeActive = !!custom;
+
+    // сброс текущей фазы в фокус
+    pauseTimer();
+    isFocus = true;
+    remainingSeconds = workMinutes * 60;
+    totalSecondsCurrentPhase = remainingSeconds;
+    pendingPhase = null;
+
+    // UI
+    modeButtons.forEach(b => b.classList.remove("active"));
+    if (!custom) {
+      document
+        .querySelector(`.mode-btn[data-work="${work}"][data-break="${brk}"]`)
+        ?.classList.add("active");
+      customInputs.style.display = "none";
+    } else {
+      customModeBtn.classList.add("active");
+      customInputs.style.display = "flex";
+    }
+
+    resetTipIndexForPhase();
+    updateDisplay();
+    updateTipText();
+  }
+
+  modeButtons.forEach(btn => {
+    if (btn.id === "customModeBtn") return;
+    btn.addEventListener("click", () => {
+      tactileTap();
+      const w = parseInt(btn.dataset.work, 10);
+      const b = parseInt(btn.dataset.break, 10);
+      if (isFinite(w) && isFinite(b)) setMode(w, b, false);
     });
+  });
 
-    function formatTime(sec) {
-      const m = Math.floor(sec / 60);
-      const s = sec % 60;
-      return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
-    }
+  customModeBtn.addEventListener("click", () => {
+    tactileTap();
+    // просто открыть поля ввода + подсветить кнопку
+    modeButtons.forEach(b => b.classList.remove("active"));
+    customModeBtn.classList.add("active");
+    customInputs.style.display = (customInputs.style.display === "flex") ? "none" : "flex";
+  });
 
-    function updateAchievements() {
-      achBadges.forEach(badge => {
-        const threshold = parseInt(badge.getAttribute('data-threshold'), 10);
-        if (cycles >= threshold) {
-          badge.classList.add('earned');
-        } else {
-          badge.classList.remove('earned');
-        }
+  applyCustomBtn.addEventListener("click", () => {
+    tactileTap();
+    const w = parseInt(customWorkInput.value, 10);
+    const b = parseInt(customBreakInput.value, 10);
+
+    if (!isFinite(w) || w < 1 || w > 180) return;
+    if (!isFinite(b) || b < 1 || b > 60) return;
+
+    setMode(w, b, true);
+  });
+
+  // --- Таймер ---
+  startPauseBtn.addEventListener("click", () => {
+    tactileTap();
+    if (phaseModal && !phaseModal.classList.contains("hidden")) return; // пока открыта модалка фазы — не трогаем
+    if (isRunning) pauseTimer();
+    else startTimer();
+  });
+
+  resetBtn.addEventListener("click", () => {
+    tactileTap();
+    resetTimer();
+  });
+
+  // --- Модалка смены фазы ---
+  phaseModalBtn.addEventListener("click", () => {
+    tactileTap();
+    confirmPhaseChange();
+  });
+
+  // --- Советы ---
+  nextTipBtn.addEventListener("click", () => {
+    tactileTap();
+    nextTip();
+  });
+
+  // --- Достижения: модалка описания ---
+  achBadges.forEach(badge => {
+    badge.addEventListener("click", () => {
+      tactileTap();
+      const title = badge.getAttribute("data-title") || "Достижение";
+      const desc = badge.getAttribute("data-desc") || "";
+      const threshold = parseInt(badge.getAttribute("data-threshold") || "0", 10);
+      const earned = cycles >= threshold;
+
+      const svgHTML = badge.querySelector(".ach-icon")?.innerHTML
+        ? `<svg viewBox="0 0 24 24">${badge.querySelector(".ach-icon")?.innerHTML}</svg>`
+        : "";
+
+      openInfoModal({
+        svgHTML,
+        title,
+        statusText: earned ? "Открыто сегодня" : `Нужно: ${threshold} ${pluralRu(threshold, ["цикл", "цикла", "циклов"])}`,
+        statusEarned: earned,
+        body: desc
       });
-    }
+    });
+  });
 
-    function pluralRu(n, forms) {
-      const nAbs = Math.abs(n) % 100;
-      const n1 = nAbs % 10;
-      if (nAbs > 10 && nAbs < 20) return forms[2];
-      if (n1 > 1 && n1 < 5) return forms[1];
-      if (n1 === 1) return forms[0];
-      return forms[2];
-    }
+  // --- Фишка METTA ---
+  featurePill.addEventListener("click", () => {
+    tactileTap();
+    openInfoModal({
+      svgHTML: `<svg viewBox="0 0 24 24"><path d="M12 3c2.2 0 4 1.8 4 4 0 1.3-.6 2.4-1.5 3.1C13.4 11 13 12 13 13c0 1.7 1.3 3 3 3" /><path d="M12 21c-2.2 0-4-1.8-4-4 0-1.3.6-2.4 1.5-3.1C10.6 13 11 12 11 11c0-1.7-1.3-3-3-3"/></svg>`,
+      title: "Фишка METTA",
+      statusText: "Гибкий «позвоночник»",
+      statusEarned: true,
+      body: "Механизм «гибкого позвоночника» в спинке помогает распределять нагрузку и поддерживать естественные изгибы спины во время работы."
+    });
+  });
 
-    function updateStreakDisplay(streak) {
-      currentStreak = streak;
-      streakValueEl.textContent = `${streak} ${pluralRu(streak, ["день", "дня", "дней"])} подряд`;
+  // --- Серия дней ---
+  streakMain.addEventListener("click", () => {
+    tactileTap();
+    const svgHTML = `<span style="font-size:22px;">🔥</span>`;
+    openInfoModal({
+      svgHTML,
+      title: "Серия дней",
+      statusText: `${currentStreak} ${pluralRu(currentStreak, ["день", "дня", "дней"])} подряд`,
+      statusEarned: true,
+      body: getStreakPraise(currentStreak)
+    });
+  });
 
-      streakIconEl.classList.remove("low", "mid", "high");
-      let statusText = "";
-      if (streak <= 1) {
-        streakIconEl.classList.add("low");
-        statusText = "Хорошее начало. Попробуй сохранить серию.";
-      } else if (streak <= 3) {
-        streakIconEl.classList.add("mid");
-        statusText = "Стабильность — сила. Спина уже чувствует разницу.";
-      } else if (streak <= 7) {
-        streakIconEl.classList.add("mid");
-        statusText = "Серия как у Duolingo. Организм скажет спасибо.";
-      } else {
-        streakIconEl.classList.add("high");
-        statusText = "Это уже привычка. Ты реально заботишься о себе.";
-      }
-      streakStatusEl.textContent = statusText;
+  // --- Info modal close ---
+  infoCloseBtn.addEventListener("click", () => {
+    tactileTap();
+    closeInfoModal();
+  });
 
-      const fireEl = document.getElementById('streakFire');
-      if (fireEl) {
-        const maxRef = 15;
-        const clamped = Math.max(0, Math.min(streak, maxRef));
-        const baseSize = 22;
-        const maxExtra = 14;
-        const size = baseSize + (maxExtra * (clamped / maxRef));
-        fireEl.style.fontSize = size + "px";
+  // --- Выбор пола ---
+  genderMaleBtn.addEventListener("click", () => {
+    tactileTap();
+    setGender("male");
+  });
 
-        const baseGlow = 4;
-        const maxGlow = 12;
-        const glow = baseGlow + (maxGlow - baseGlow) * (clamped / maxRef);
-        const color = streak >= 8
-          ? 'rgba(234,179,8,1)'
-          : 'rgba(249,115,22,0.95)';
-        fireEl.style.filter = `drop-shadow(0 0 ${glow}px ${color})`;
-      }
-    }
+  genderFemaleBtn.addEventListener("click", () => {
+    tactileTap();
+    setGender("female");
+  });
 
-    function getStreakPraise(streak) {
-      if (streak <= 1) {
-        return g(
-          "Первый день — самое важное решение уже принято. Ты выбрал заботу о себе.",
-          "Первый день — самое важное решение уже принято. Ты выбрала заботу о себе."
-        );
-      } else if (streak === 2) {
-        return g(
-          "Второй день подряд — ты не бросил на старте. Так формируется настоящая привычка.",
-          "Второй день подряд — ты не бросила на старте. Так формируется настоящая привычка."
-        );
-      } else if (streak <= 4) {
-        return "Уже несколько дней подряд ты возвращаешься к таймеру. Спина и голова скажут спасибо.";
-      } else if (streak <= 7) {
-        return "Неделя стабильных сессий — это серьёзный вклад в своё состояние. Очень сильный результат.";
-      } else if (streak <= 10) {
-        return "10 дней подряд — мощная серия. Ты относишься к себе как к ценному ресурсу.";
-      } else if (streak <= 15) {
-        return "Больше двух недель подряд — организм уже привыкает к новому, более здоровому режиму.";
-      } else if (streak <= 21) {
-        return "Около трёх недель стабильности — это уровень человека, который умеет держать курс.";
-      } else if (streak <= 30) {
-        return g(
-          "Месяц почти без срывов — очень круто. Ты проделал большую работу.",
-          "Месяц почти без срывов — очень круто. Ты проделала большую работу."
-        );
-      } else {
-        return "Серия как у профи: ты выстроил(а) устойчивую систему заботы о себе. Очень заслуженное уважение.".replace("(а)", userGender === "female" ? "а" : "");
-      }
-    }
+  // --- Настройки ---
+  settingsBtn.addEventListener("click", () => {
+    tactileTap();
+    openSettingsModal();
+  });
 
-    function getStreakMilestoneText(streak) {
-      if (streak === 2) {
-        return g(
-          "Второй день подряд — самое сложное уже позади. Продолжай, привычка закрепляется.",
-          "Второй день подряд — самое сложное уже позади. Продолжай, привычка закрепляется."
-        );
-      } else if (streak === 4) {
-        return "Четыре дня подряд — ты не даёшь себе забыть про паузы и фокус. Крутой темп.";
-      } else if (streak === 7) {
-        return "Неделя с METTA — твой позвоночник точно это ценит. Отличная стабильность.";
-      } else if (streak === 10) {
-        return "10 дней фокуса и пауз — это очень серьёзное отношение к себе и своей работе.";
-      } else if (streak === 15) {
-        return "15 дней подряд — это уже не эксперимент, а стиль жизни. Ты большой молодец.";
-      } else if (streak === 21) {
-        return g(
-          "21 день — классический срок, чтобы закрепить привычку. Ты проделал огромную работу.",
-          "21 день — классический срок, чтобы закрепить привычку. Ты проделала огромную работу."
-        );
-      } else if (streak === 30) {
-        return "30 дней подряд — это уровень уважения к себе, которым можно гордиться.";
-      } else if (streak > 30) {
-        return g(
-          `Уже ${streak} ${pluralRu(streak, ["день", "дня", "дней"])} подряд — ты держишь серию как чемпион.`,
-          `Уже ${streak} ${pluralRu(streak, ["день", "дня", "дней"])} подряд — ты держишь серию как чемпионка.`
-        );
-      }
-      return "Сильная серия. Продолжай в своём ритме — без перфекционизма, но с заботой о себе.";
-    }
+  settingsCloseBtn.addEventListener("click", () => {
+    tactileTap();
+    closeSettingsModal();
+  });
 
-    function maybeShowStreakMilestone(prevStreak, newStreak, todayStr) {
-      if (newStreak <= 1) return;
+  themeDarkBtn.addEventListener("click", () => {
+    tactileTap();
+    applyTheme("dark", true);
+  });
 
-      try {
-        const shownDate = localStorage.getItem(STREAK_MILESTONE_SHOWN_KEY);
-        if (shownDate === todayStr) return;
+  themeLightBtn.addEventListener("click", () => {
+    tactileTap();
+    applyTheme("light", true);
+  });
 
-        const thresholds = [2, 4, 7, 10, 15, 21, 30];
-        const hit = thresholds.some(t => prevStreak < t && newStreak >= t);
+  settingsGenderMale.addEventListener("click", () => {
+    tactileTap();
+    setGender("male");
+  });
 
-        if (!hit && newStreak <= 30) return;
-        if (newStreak > 30 && !(prevStreak < newStreak)) return;
+  settingsGenderFemale.addEventListener("click", () => {
+    tactileTap();
+    setGender("female");
+  });
 
-        const svg = streakIconEl.querySelector('span')?.outerHTML || "";
+  settingsTourBtn.addEventListener("click", () => {
+    tactileTap();
+    closeSettingsModal();
+    openTour();
+  });
 
-        openInfoModal({
-          svgHTML: svg,
-          title: "Сильная серия",
-          statusText: `${newStreak} ${pluralRu(newStreak, ["день подряд", "дня подряд", "дней подряд"])}`,
-          statusEarned: true,
-          body: getStreakMilestoneText(newStreak)
-        });
+  // --- Тур ---
+  tourSkipBtn.addEventListener("click", () => {
+    tactileTap();
+    closeTour();
+  });
 
-        localStorage.setItem(STREAK_MILESTONE_SHOWN_KEY, todayStr);
-      } catch (e) {}
-    }
+  tourNextBtn.addEventListener("click", () => {
+    tactileTap();
+    nextTour();
+  });
 
-    function initStreak() {
-      try {
-        const today = new Date();
-        const todayStr = getLocalDateKey(today);
+  // --- Закрытие модалок по клику на фон (аккуратно) ---
+  function closeOnBackdrop(e, modalEl, closeFn) {
+    if (e.target === modalEl) closeFn();
+  }
 
-        const lastUpdated = localStorage.getItem(STREAK_LAST_UPDATED_KEY);
-        const prevStreak = parseInt(localStorage.getItem(STREAK_VALUE_KEY) || "0", 10);
+  infoModal.addEventListener("click", (e) => closeOnBackdrop(e, infoModal, closeInfoModal));
+  settingsModal.addEventListener("click", (e) => closeOnBackdrop(e, settingsModal, closeSettingsModal));
+  tourModal.addEventListener("click", (e) => closeOnBackdrop(e, tourModal, closeTour));
+  // phaseModal по клику на фон НЕ закрываем — только кнопкой (иначе люди будут случайно пропускать)
 
-        let streak = prevStreak;
+  // --- Инициализация при старте ---
+  loadGenderFromStorage();
+  loadThemeFromStorage();
+  initCyclesToday();
+  initStreak();
 
-        if (lastUpdated === todayStr && streak > 0) {
-          updateStreakDisplay(streak);
-          return;
-        }
+  updateWaterGradientForTheme();
+  resetTipIndexForPhase();
+  updateDisplay();
+  updateTipText();
 
-        const baseDayStr = localStorage.getItem(STREAK_DATE_KEY);
-
-        if (!baseDayStr) {
-          streak = 1;
-        } else {
-          const [by, bm, bd] = baseDayStr.split("-").map(Number);
-          const [ty, tm, td] = todayStr.split("-").map(Number);
-
-          const baseDate = new Date(by, bm - 1, bd);
-          const todayDate = new Date(ty, tm - 1, td);
-
-          const diffDays = Math.round(
-            (todayDate - baseDate) / (1000 * 60 * 60 * 24)
-          );
-
-          if (diffDays === 0) {
-            if (!streak || streak < 1) streak = 1;
-          } else if (diffDays === 1) {
-            streak = (isFinite(streak) && streak > 0) ? streak + 1 : 1;
-          } else {
-            streak = 1;
-          }
-        }
-
-        localStorage.setItem(STREAK_DATE_KEY, todayStr);
-        localStorage.setItem(STREAK_VALUE_KEY, String(streak));
-        localStorage.setItem(STREAK_LAST_UPDATED_KEY, todayStr);
-
-        updateStreakDisplay(streak);
-        maybeShowStreakMilestone(prevStreak, streak, todayStr);
-      } catch (e) {}
-    }
-
-    function initCyclesToday() {
-      try {
-        const todayStr = getLocalDateKey();
-        const lastDateStr = localStorage.getItem(CYCLES_DATE_KEY);
-        let stored = parseInt(localStorage.getItem(CYCLES_VALUE_KEY) || "0", 10);
-
-        if (!lastDateStr || lastDateStr !== todayStr) {
-          cycles = 0;
-          localStorage.setItem(CYCLES_DATE_KEY, todayStr);
-          localStorage.setItem(CYCLES_VALUE_KEY, "0");
-        } else {
-          cycles = isFinite(stored) && stored >= 0 ? stored : 0;
-        }
-      } catch (e) {
-        cycles = 0;
-      }
-    }
-
-    function saveCyclesToday() {
-      try {
-        const todayStr = getLocalDateKey();
-        localStorage.setItem(CYCLES_DATE_KEY, todayStr);
-        localStorage.setItem(CYCLES_VALUE_KEY, String(cycles));
-      } catch (e) {}
-    }
-
-    function updateTimerFill() {
-      if (!waterRect || !totalSecondsCurrentPhase || totalSecondsCurrentPhase <= 0) return;
-
-      const elapsed = totalSecondsCurrentPhase - remainingSeconds;
-      const ratio = Math.max(0, Math.min(1, elapsed / totalSecondsCurrentPhase));
-
-      const fullH = 200;
-      const h = fullH * ratio;
-      const y = fullH - h;
-
-      waterRect.setAttribute("height", h);
-      waterRect.setAttribute("y", y);
-
-      if (ratio >= 0.5) {
-        timerCircle.classList.add('over-water');
-      } else {
-        timerCircle.classList.remove('over-water');
-      }
-    }
-
-    function updateDisplay() {
-      timerEl.textContent = formatTime(remainingSeconds);
-      cyclesEl.textContent = `Завершено циклов: ${cycles}`;
-
-      if (isFocus) {
-        statusEl.classList.add('focus');
-        statusEl.classList.remove('break');
-        statusEl.querySelector('.status-label').textContent = "Режим фокуса";
-        phaseLabelEl.textContent = "Фокус-сессия";
-      } else {
-        statusEl.classList.remove('focus');
-        statusEl.classList.add('break');
-        statusEl.querySelector('.status-label').textContent = "Перерыв";
-        phaseLabelEl.textContent = "Перерыв для спины";
-      }
-
-      updateAchievements();
-      updateTimerFill();
-    }
-
-    function showPhaseModal(type) {
-      pendingPhase = type;
-
-      if (type === "focusToBreak") {
-        const nextCycle = cycles + 1;
-        phaseModalTitle.textContent = "Фокус-сессия завершена ✔";
-        phaseModalText.textContent =
-          `Отличная работа — это уже ${nextCycle}-й фокус-цикл сегодня. Спина и мозг благодарны.`;
-        phaseModalNote.textContent = "Нажми, когда захочешь перейти к перерыву и немного разгрузить тело.";
-        phaseModalBtn.textContent = "Перейти к перерыву";
-      } else {
-        phaseModalTitle.textContent = "Перерыв завершён 💡";
-        phaseModalText.textContent =
-          "Класс, что даёшь себе отдых. Теперь можно мягко вернуться к задаче и забрать ещё один фокус-цикл.";
-        phaseModalNote.textContent = "Нажми, когда захочешь снова сфокусироваться на работе.";
-        phaseModalBtn.textContent = "Вернуться к фокусу";
-      }
-
-      phaseModal.classList.remove("hidden");
-      playNotificationSound();
-    }
-
-    function confirmPhaseChange() {
-      if (!pendingPhase) return;
-
-      if (pendingPhase === "focusToBreak") {
-        cycles++;
-        saveCyclesToday();
-        isFocus = false;
-        remainingSeconds = breakMinutes * 60;
-        totalSecondsCurrentPhase = remainingSeconds;
-      } else {
-        isFocus = true;
-        remainingSeconds = workMinutes * 60;
-        totalSecondsCurrentPhase = remainingSeconds;
-      }
-
-      pendingPhase = null;
-      resetTipIndexForPhase();
-      updateDisplay();
-      phaseModal.classList.add("hidden");
-      startTimer();
-    }
-
-    function startTimer() {
-      if (isRunning) return;
-      isRunning = true;
-      startPauseBtn.innerHTML = "<span>⏸</span><span>Пауза</span>";
-
-      ensureAudioCtx();
-
-      timerInterval = setInterval(() => {
-        remainingSeconds--;
-        if (remainingSeconds <= 0) {
-          remainingSeconds = 0;
-          updateTimerFill();
-          clearInterval(timerInterval);
-          isRunning = false;
-
-          if (isFocus) {
-            showPhaseModal("focusToBreak");
-          } else {
-            showPhaseModal("breakToFocus");
-          }
-        } else {
-          timerEl.textContent = formatTime(remainingSeconds);
-          updateTimerFill();
-        }
-      }, 1000);
-    }
-
-    function pauseTimer() {
-      isRunning = false;
-      startPauseBtn.innerHTML = "<span>▶</span><span>Старт</span>";
-      if (timerInterval) {
-        clearInterval(timerInterval);
-      }
-    }
-
-    function resetTimer() {
-      pauseTimer();
-      isFocus = true;
-      remainingSeconds = workMinutes * 60;
-      totalSecondsCurrentPhase = remainingSeconds;
-      pendingPhase = null;
-      phaseModal.classList.add("hidden");
-      resetTipIndexForPhase();
-      updateDisplay();
-    }
-
-    function openInfoModal(options) {
-      const { svgHTML, title, statusText, statusEarned, body } = options;
-
-      infoIcon.classList.remove("earned", "locked");
-      if (statusEarned === true) {
-        infoIcon.classList.add("earned");
-      } else if (statusEarned === false) {
-        infoIcon.classList.add("locked");
-      }
-
-      infoIcon.innerHTML = svgHTML || "";
-      infoTitle.textContent = title || "";
-      infoBody.textContent = body || "";
-
-      infoStatus.textContent = statusText || "";
-      infoStatus.classList.remove("info-status-earned");
-      if (statusEarned) {
-        infoStatus.classList.add("info-status-earned");
-      }
-
-      infoModal.classList.remove("hidden");
-    }
-
-    function closeInfoModal() {
-      infoModal.classList.add("hidden");
-    }
-
-    function showGenderModalIfNeeded() {
-      if (!genderModal) return;
-      if (!userGender) {
-        genderModal.classList.remove("hidden");
-      }
-    }
-
-    function setGender(gender) {
-      userGender = gender;
-      try {
-        localStorage.setItem(GENDER_KEY, gender);
-      } catch (e) {}
-      if (genderModal && !genderModal.classList.contains("hidden")) {
-        genderModal.classList.add("hidden");
-      }
-      updateStreakDisplay(currentStreak);
-      maybeStartTourAuto();
-      updateSettingsGenderButtons();
-    }
-
-    // Настройки: обновление состояния кнопок
-    function updateSettingsThemeButtons() {
-      if (!themeDarkBtn || !themeLightBtn) return;
-      themeDarkBtn.classList.toggle("settings-pill-active", currentTheme === "dark");
-      themeLightBtn.classList.toggle("settings-pill-active", currentTheme === "light");
-    }
-
-    function updateSettingsGenderButtons() {
-      if (!settingsGenderMale || !settingsGenderFemale) return;
-      settingsGenderMale.classList.toggle("settings-pill-active", userGender === "male");
-      settingsGenderFemale.classList.toggle("settings-pill-active", userGender === "female");
-    }
-
-    function openSettingsModal() {
-      settingsModal.classList.remove("hidden");
-      updateSettingsThemeButtons();
-      updateSettingsGenderButtons();
-    }
-
-    function closeSettingsModal() {
-      settingsModal.classList.add("hidden");
-    }
-
-    // переключение градиента воды по теме
-    function updateWaterGradientForTheme() {
-      if (!waterRect) return;
-      if (currentTheme === "light") {
-        waterRect.setAttribute("fill", "url(#waterGradientLight)");
-      } else {
-        waterRect.setAttribute("fill", "url(#waterGradientDark)");
-      }
-    }
-
-    // Онбординг / тур
-    const tourSteps = [
-      {
-        title: "Таймер и режимы",
-        body: "Здесь ты запускаешь Pomodoro: выбираешь режим, нажимаешь «Старт» и чередуешь фокус и перерыв."
-      },
-      {
-        title: "Достижения и серия дней",
-        body: "В блоке «Достижения» и «Серия дней» видно, как ты держишь ритм. Нажми на значок, чтобы увидеть описание и похвалу."
-      },
-      {
-        title: "Советы для спины",
-        body: "Внизу появляются короткие советы по посадке и перерывам. Меняй их по кнопке «Сменить»."
-      },
-      {
-        title: "Фишка METTA и настройки",
-        body: "Нажми «Фишка METTA», чтобы узнать про гибкий «позвоночник» спинки, а через значок ⚙ можно сменить тему (тёмную или светлую) и обращение."
-      }
-    ];
-
-    let tourIndex = 0
+  showGenderModalIfNeeded();
+  maybeStartTourAuto();
+</script>
